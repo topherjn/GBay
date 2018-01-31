@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+     <link href="../static/signin.css" rel="stylesheet">
+    <div class="container">
+      <form class="form-signin" method="post" name="register">
+          {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+          {{ form.hidden_tag() }}
+          <div class="row">
+              <div class="col-xs-6" >
+                <img src="./images/gt_buzz.png" class="img-rounded" alt="GT Bay" width="125" height="125">
+              </div>
+              <div class="col-xs-6" >
+                It's not junk if someone will pay for it.
+              </div>
+          </div>
+        <label for="first_name" >First Name:</label> {{ form.first_name(id="first_name", class="form-control", size=20) }}
+        <label for="last_name" >Last Name:</label> {{ form.last_name(id="last_name", class="form-control", size=20) }}
+        <label for="user_name" >Username:</label> {{ form.user_name(id="user_name", class="form-control", size=20) }}
+        <label for="password" >Password:</label> {{ form.password(id="password", class="form-control", size=20) }}
+        <label for="confirm" >Confirm Password:</label> {{ form.confirm(id="confirm", class="form-control", size=20) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        <a href="login">Cancel</a>
+      </form>
+    </div>
+{% endblock %}

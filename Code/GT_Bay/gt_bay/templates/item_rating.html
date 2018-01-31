@@ -1,0 +1,32 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+
+    <link href="../static/css/stars-stylesheet.css" rel="stylesheet">
+    <div class="container">
+      <form class="form-signin" method="post" name="rate_item">
+        {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+        <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
+        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", readonly="true", class="form-control", size=20) }}
+        <label for="average_rating" >Average Rating:</label> {{ form.average_rating(id="average_rating", readonly="true", class="form-control", size=20) }}
+        <div class="row">
+                <div class="col-xs-3">
+                    My Rating
+                </div>
+
+              <div class="col-xs-9">
+                <span class="star-rating">
+                  <input type="radio" name="rating1" id="R11" value="1"><i></i>
+                  <input type="radio" name="rating1" id="R12" value="2"><i></i>
+                  <input type="radio" name="rating1" id="R13" value="3"><i></i>
+                  <input type="radio" name="rating1" id="R14" value="4"><i></i>
+                  <input type="radio" name="rating1" id="R15" value="5"><i></i>
+                </span>
+              </div>
+          </div>
+
+        <label for="comments" >Comments:</label> {{ form.comments(id="comments", class="form-control", size=20) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Rate this item</button>
+        <a href="index">Cancel</a>
+      </form>
+    </div>
+{% endblock %}

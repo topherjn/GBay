@@ -1,0 +1,16 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+      <form class="form-signin" method="post" name="search">
+          {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+          {{ form.hidden_tag() }}
+        <label for="keyword" >Keyword:</label> {{ form.keyword(id="keyword", class="form-control", size=50) }}
+        <label for="category" >Category:</label> {{ form.category(id="category", class="form-control") }}
+        <label for="minimum_price" >Minimum Price:</label> {{ form.minimum_price(id="minimum_price", class="form-control", size=20) }}
+        <label for="maximum_price" >Maximum Price:</label> {{ form.maximum_price(id="maximum_price", class="form-control", size=20) }}
+        <label for="condition" >Condition at least:</label> {{ form.condition(id="condition", class="form-control") }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+        <a href="index">Cancel</a>
+      </form>
+    </div>
+{% endblock %}
