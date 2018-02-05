@@ -1,19 +1,37 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, DecimalField, BooleanField, HiddenField, PasswordField
+from wtforms import StringField, SelectField, TextAreaField, DecimalField, SubmitField, BooleanField, HiddenField, PasswordField
 from wtforms.validators import DataRequired
+import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 class LoginForm(FlaskForm):
-    user_name = StringField('user_name', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    user_name = StringField('user_name', validators=[DataRequired("Username is required.")])
+    password = PasswordField('password', validators=[DataRequired("Password is required.")])
+    submit = SubmitField('Sign In')
 
 
 class RegisterForm(FlaskForm):
-    first_name = StringField('first_name', validators=[DataRequired()])
-    last_name = StringField('last_name', validators=[DataRequired()])
-    user_name = StringField('user_name', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
-    confirm = PasswordField('confirm', validators=[DataRequired()])
+    first_name = StringField('first_name', validators=[DataRequired("First Name is required.")])
+    last_name = StringField('last_name', validators=[DataRequired("Last Name is required.")])
+    user_name = StringField('user_name', validators=[DataRequired("User Name is required.")])
+    password = PasswordField('password', validators=[DataRequired("Password is required.")])
+    confirm = PasswordField('confirm', validators=[DataRequired("Confirm is required.")])
+    submit = SubmitField('Register')
+
+    def validate(self):
+        logging.debug("IN validate method")
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        if self.password.data != self.confirm.data:
+            logging.debug("pass not equal")
+            self.confirm.errors.append('Password and confirm password are not equal.')
+            result = False
+
+        return result
+
 
 class ListNewItemForm(FlaskForm):
     item_name = StringField('item_name', validators=[DataRequired()])

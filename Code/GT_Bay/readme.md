@@ -38,3 +38,11 @@ To install on EC2 follow the below guidelines:
 
    for d in `ps -auxww|grep python|cut -d' ' -f4`;do echo $d; done
    kill -9 `cat thermo_ui/gunicorn.pid`
+
+
+   for mySQL support you must add the mysqlclient
+   pip install mysqlclient
+
+   also had to symlink the mysql client library on my Mac
+   sudo ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/local/lib/libmysqlclient.18.dylib
+

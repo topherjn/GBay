@@ -30,7 +30,7 @@ def index():
 def login():
     form = LoginForm()
     error = None
-    if request.method == 'POST':
+    if form.validate_on_submit():
         logging.debug("user_name={}, password={}".format(request.form['user_name'], request.form['password']))
         user, error = User.login(request.form['user_name'], request.form['password'])
         logging.debug("user={}, error={}".format(user, error))
@@ -55,25 +55,16 @@ def logout():
 def register():
     form = RegisterForm()
     error = None
-    if request.method == 'POST':
-        # todo this is just temp PoC code
-        if len(request.form['first_name']) == 0:
-            error = 'First Name is required'
-        elif len(request.form['last_name']) == 0:
-            error = 'Last Name is required'
-        elif len(request.form['user_name']) == 0:
-            error = 'Username is required'
-        elif len(request.form['password']) == 0:
-            error = 'Password is required'
-        elif request.form['password'] != request.form['confirm']:
-            error = 'Password does not match confirm'
-        else:
-            user, error = User.create_user(request.form['user_name'], request.form['password'],
-                             request.form['first_name'], request.form['last_name'])
-            if user is not None:
-                session['user'] = user.to_json()
-                return redirect(url_for('index'))
+    logging.debug("IN register method")
+    if form.validate_on_submit():
+        logging.debug("PASSED form.validate_on_submit")
+        user, error = User.register_user(request.form['user_name'], request.form['password'],
+                                         request.form['first_name'], request.form['last_name'])
+        if user is not None:
+            session['user'] = user.to_json()
+            return redirect(url_for('index'))
 
+    logging.debug("OUT register method")
     return render_template('register.html',
                            ui_data={},
                            form=form,
