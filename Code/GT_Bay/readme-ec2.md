@@ -9,6 +9,7 @@ To install on EC2 follow the below guidelines:
        -- Tomcat-key.pem is my AWS permissions key file
    * `sudo apt-get update`
    * `sudo apt-get -y upgrade`
+   * `sudo apt-get -y install mysql-server`
    * `sudo apt-get -y install python3-pip python3-dev`
    * `sudo apt-get -y install python3-venv`
    * `pip3 install --upgrade pip setuptools`

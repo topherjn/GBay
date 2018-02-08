@@ -5,7 +5,7 @@ if [ "$1" == "" ]; then
     echo no ec2 address passed! usage: deploy_to_ec2.sh ubuntu@34.206.176.170
     exit
 else
-    cd /Users/danhiggins/Code/GATech/CS6400_Database_Design/project/GT_Bay
+    cd /Users/danhiggins/Code/GATech/CS6400_Database_Design/6400Spring18Team047/Code/GT_Bay
     tar -cvf gt_bay.tar gt_bay
     scp -i ${PEM_KEY} gt_bay.tar ${1}:/home/ubuntu/Applications/
     ssh -i ${PEM_KEY} $1 'cd /home/ubuntu/Applications/gt_bay; kill -9 `cat gunicorn.pid`'|| :

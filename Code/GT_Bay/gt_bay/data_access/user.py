@@ -1,6 +1,6 @@
 import logging
-import MySQLdb
-from MySQLdb import IntegrityError
+
+from pymysql import IntegrityError
 
 from data_access.base_data_access_object import BaseDAO
 
