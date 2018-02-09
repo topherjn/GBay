@@ -1,10 +1,17 @@
 {% extends "layout_with_menu.html" %}
 {% block body %}
     <div class="container">
-      <form class="form-signin" method="post" name="list_new_item">
+    <div class="panel panel-primary">
+     <div class="panel-heading">
+            <h3 class="panel-title">List Item for Auction</h3>
+     </div>
+
+      <form class="form-group" method="post" name="list_new_item">
           {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
           {{ form.hidden_tag() }}
-        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", class="form-control", size=20) }}
+      <div class="panel-body">
+
+        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", class="form-control", width="50px", size=20) }}
         <label for="description" >Description:</label> {{ form.description(id="description", class="form-control", size=20) }}
         <label for="category" >Category:</label> {{ form.category(id="category", class="form-control") }}
         <label for="condition" >Condition:</label> {{ form.condition(id="condition", class="form-control") }}
@@ -13,8 +20,12 @@
         <label for="auction_days" >Auction ends in:</label> {{ form.auction_days(id="auction_days", class="form-control") }}
         <label for="now_sale_price" >Get it now price (optional):</label> {{ form.now_sale_price(id="now_sale_price", class="form-control", size=20) }}
         <label for="returns_accepted" >Returns Accepted?:</label> {{ form.returns_accepted(id="returns_accepted", class="form-control") }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">List New Item</button>
-        <a href="index">Cancel</a>
+          <br/>
+          <button class="btn btn-lg btn-primary" type="submit">List New Item</button>
+           <a href="index">Cancel</a>
+      </div>
+
       </form>
+    </div>
     </div>
 {% endblock %}

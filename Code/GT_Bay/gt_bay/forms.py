@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, TextAreaField, DecimalField, SubmitField, BooleanField, HiddenField, PasswordField
 from wtforms.validators import DataRequired
+from data_access.category import Category
 import logging
 
 logger = logging.getLogger()
@@ -36,7 +37,8 @@ class RegisterForm(FlaskForm):
 class ListNewItemForm(FlaskForm):
     item_name = StringField('item_name', validators=[DataRequired()])
     description = TextAreaField('description', validators=[DataRequired()])
-    category_choices = [('art', 'Art'), ('books', 'Books'), ('electronics', 'Electronics'), ('home', 'Home & Garden'), ('sports', 'Sporting Goods'), ('toys', 'Toys'), ('other', 'Other')]
+    category_choices, error = Category.get_categories()
+    # category_choices = [('art', 'Art'), ('books', 'Books'), ('electronics', 'Electronics'), ('home', 'Home & Garden'), ('sports', 'Sporting Goods'), ('toys', 'Toys'), ('other', 'Other')]
     category = SelectField('category', choices=category_choices, validators=[DataRequired()])
     condition_choices = [('50', 'New'), ('40', 'Very Good'), ('30', 'Good'), ('20', 'Fair'), ('10', 'Poor')]
     condition = SelectField('condition', choices=condition_choices, validators=[DataRequired()])
@@ -49,7 +51,7 @@ class ListNewItemForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     keyword = StringField('keyword', validators=[DataRequired()])
-    category_choices = [('art', 'Art'), ('books', 'Books'), ('electronics', 'Electronics'), ('home', 'Home & Garden'), ('sports', 'Sporting Goods'), ('toys', 'Toys'), ('other', 'Other')]
+    category_choices, error = Category.get_categories()
     category = SelectField('category', choices=category_choices, validators=[DataRequired()])
     minimum_price = DecimalField('minimum_price', validators=[DataRequired()])
     maximum_price = DecimalField('maximum_price', validators=[DataRequired()])

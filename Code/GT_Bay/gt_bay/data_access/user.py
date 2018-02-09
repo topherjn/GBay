@@ -44,10 +44,11 @@ class User(BaseDAO):
 
 
     @staticmethod
-    def login(user_name=None, password=None):
+    def login(user_name, password):
         ret_val = None
         error = None
-        logging.debug("sss user_name={}, password={}".format(user_name, password))
+        logging.debug("login user_name={}, password={}".format(user_name, password))
+
         select_sql = "SELECT * FROM GT_BAY_USER WHERE username='{}' AND password='{}'".format(user_name, password)
 
         db = User.get_db()
@@ -68,10 +69,10 @@ class User(BaseDAO):
         return ret_val, error
 
     @staticmethod
-    def register_user(user_name=None, password=None, first_name=None, last_name=None):
+    def register_user(user_name, password, first_name, last_name):
         ret_val = None
         error = None
-        logging.debug("sss user_name={}, password={}".format(user_name, password))
+        logging.debug("register_user user_name={}, password={}".format(user_name, password))
 
         insert_sql="INSERT INTO GT_BAY_USER(username, password, first_name, last_name) " \
                    "VALUES ('{}', '{}', '{}', '{}')".format(user_name, password, first_name, last_name)

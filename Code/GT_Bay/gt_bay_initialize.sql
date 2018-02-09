@@ -38,7 +38,6 @@ CREATE TABLE ITEM(
    minimum_sale DECIMAL(10,2) NOT NULL,
    auction_length INT NOT NULL,
    get_it_now DECIMAL(10,2) NULL,
-   winner INT NULL,
    start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
    category_id INT NOT NULL, -- FKey
    listing_user_id INT NOT NULL, -- FKey

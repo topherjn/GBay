@@ -1,8 +1,13 @@
 {% extends "layout_with_menu.html" %}
 {% block body %}
     <div class="container">
+    <div class="panel panel-primary">
+     <div class="panel-heading">
+            <h3 class="panel-title">Item Bid</h3>
+     </div>
       <form class="form-signin" method="post" name="get_it_now">
         {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+      <div class="panel-body">
         <a href="item_rating">View Ratings</a><br/>
         <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
         <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", readonly="true", class="form-control", size=20) }}
@@ -13,12 +18,17 @@
         <label for="now_sale_price" >Get it now price:</label> {{ form.now_sale_price(id="now_sale_price", readonly="true", class="form-control", size=20) }}
 
         <label for="auction_end_dt" >Auction ends:</label> {{ form.auction_end_dt(id="auction_end_dt", readonly="true", class="form-control") }}
+      </div>
       </form>
       <form class="form-signin" method="post" name="place_bid">
+          <div class="panel-body">
         <label for="your_bid" >Your bid:</label> {{ form.your_bid(id="your_bid", class="form-control", size=20) }}
         <label for="min_bid" >Minimum bid:</label> {{ form.min_bid(id="min_bid", readonly="true", class="form-control", size=20) }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Bid on this Item</button>
+              <br/>
+        <button class="btn btn-lg btn-primary" type="submit">Bid on this Item</button>
         <a href="index">Cancel</a>
+          </div>
       </form>
+    </div>
     </div>
 {% endblock %}

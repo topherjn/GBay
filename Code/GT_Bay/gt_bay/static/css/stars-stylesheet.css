@@ -6,7 +6,7 @@
   height: 30px;
   overflow: hidden;
   position: relative;
-  background: url('../static/images/star-off.svg');
+  background: url('../images/star-off.svg');
   background-size: contain;
 }
 .star-rating i {
@@ -17,7 +17,7 @@
   height: 100%;
   width: 20%;
   z-index: 1;
-  background: url('../static/images/star-on.svg');
+  background: url('../images/star-on.svg');
   background-size: contain;
 }
 .star-rating input {
