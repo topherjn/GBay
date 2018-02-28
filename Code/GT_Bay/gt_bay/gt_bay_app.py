@@ -1,6 +1,7 @@
 from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemDescriptionForm, ItemRatingForm
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from data_access.user import User
+from data_access.item import Item
 from datetime import datetime
 from dateutil import tz
 import time
@@ -75,13 +76,45 @@ def register():
 def list_new_item():
     form = ListNewItemForm()
     error = None
-    if request.method == 'POST':
-        # todo this needs clean up and DB on unique username
-        if len(request.form['item_name']) == 0:
-            error = 'Item Name is required'
-        else:
-            # todo add user to db
+    if form.validate_on_submit():
+
+        msg = "now_sale_price='{}' type={}".format(request.form['now_sale_price'],type(request.form['now_sale_price']))
+        logging.debug("PASSED form.validate_on_submit ["+ msg+"]")
+        # todo need to run the business rules validations here before the INSERT
+        returnable = False
+        logging.debug("returns_accepted=[{}]".format(str(request.form)))
+        if 'returns_accepted' in request.form:
+            returnable = True
+
+        now_sale_price = "NULL"
+        if request.form['now_sale_price'] != "":
+            now_sale_price = request.form['now_sale_price']
+
+        item = Item(0,
+                    request.form['item_name'],
+                    request.form['description'],
+                    request.form['category'],
+                    request.form['condition'],
+                    returnable,
+                    #todo clean this strip replace up
+                    request.form['start_bid'].strip('$').replace(',', ''),
+                    request.form['min_sale_price'].strip('$').replace(',', ''),
+                    request.form['auction_days'],
+                    #todo start time is populated from the db
+                    #passing here but likely not needed
+                    datetime.now(),
+                    session['user']['user_name'],
+                    now_sale_price.strip('$').replace(',', '')
+                    )
+        logging.debug("passed constructor")
+        item_id, error = item.persist()
+        logging.debug("passed item.persist")
+        if item_id is not None:
+            logging.debug("passed if item_id is not None")
+            flash("Your item {} is now in an auction".format(request.form['item_name']))
             return redirect(url_for('index'))
+        logging.debug("exiting validation loop")
+
 
     return render_template('list_new_item.html',
                            ui_data={},
@@ -93,13 +126,13 @@ def list_new_item():
 def search():
     form = SearchForm()
     error = None
-    if request.method == 'POST':
+    logging.debug("search.....")
+    if form.validate_on_submit():
+        logging.debug("form.validate_on_submit()")
         # todo this needs clean up and DB on unique username
-        if len(request.form['keyword']) == 0:
-            error = 'Keyword is required'
-        else:
-            # todo add user to db
-            return redirect(url_for('search_results'))
+        return redirect(url_for('search_results'))
+
+    logging.debug("form.errors={}".format(form.errors))
 
     return render_template('search.html',
                            ui_data={},

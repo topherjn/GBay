@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, TextAreaField, DecimalField, SubmitField, BooleanField, HiddenField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Regexp, Optional
 from data_access.category import Category
 import logging
 
@@ -22,41 +22,109 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate(self):
-        logging.debug("IN validate method")
+        logging.debug("In validate method")
         if not FlaskForm.validate(self):
             return False
         result = True
         if self.password.data != self.confirm.data:
-            logging.debug("pass not equal")
+            logging.debug("passwords not equal")
             self.confirm.errors.append('Password and confirm password are not equal.')
             result = False
-
         return result
+
 
 
 class ListNewItemForm(FlaskForm):
     item_name = StringField('item_name', validators=[DataRequired()])
     description = TextAreaField('description', validators=[DataRequired()])
     category_choices, error = Category.get_categories()
-    # category_choices = [('art', 'Art'), ('books', 'Books'), ('electronics', 'Electronics'), ('home', 'Home & Garden'), ('sports', 'Sporting Goods'), ('toys', 'Toys'), ('other', 'Other')]
-    category = SelectField('category', choices=category_choices, validators=[DataRequired()])
-    condition_choices = [('50', 'New'), ('40', 'Very Good'), ('30', 'Good'), ('20', 'Fair'), ('10', 'Poor')]
-    condition = SelectField('condition', choices=condition_choices, validators=[DataRequired()])
-    start_bid = DecimalField('start_bid', validators=[DataRequired()])
-    min_sale_price = DecimalField('min_sale_price', validators=[DataRequired()])
-    auction_days_choices = [('1', '1 Day'), ('3', '3 Days'), ('5', '5 Days'), ('7', '7 Days')]
-    auction_days = SelectField('auction_days', choices=auction_days_choices, validators=[DataRequired()])
-    now_sale_price = DecimalField('now_sale_price', validators=[DataRequired()])
-    returns_accepted = BooleanField('returns_accepted', validators=[DataRequired()])
+    # category_choices = [(1, 'Art'), (2, 'Books'), (3, 'Electronics'), (4, 'Home & Garden'), (5, 'Sporting Goods'), (6, 'Toys'), (7, 'Other')]
+    category = SelectField('category', coerce=int, choices=category_choices)
+    condition_choices = [(50, 'New'), (40, 'Very Good'), (30, 'Good'), (20, 'Fair'), (10, 'Poor')]
+    condition = SelectField('condition', coerce=int, choices=condition_choices)
+    start_bid = StringField('start_bid', validators=[DataRequired("Start bid price is required.")])
+    min_sale_price = StringField('min_sale_price', validators=[DataRequired("Minimum sale price is required.")])
+    auction_days_choices = [(1, '1 Day'), (3, '3 Days'), (5, '5 Days'), (7, '7 Days')]
+    auction_days = SelectField('auction_days', coerce=int, choices=auction_days_choices)
+    now_sale_price = StringField('now_sale_price')
+    returns_accepted = BooleanField('returns_accepted', validators=[Optional()])
+    submit = SubmitField('List New Item')
+
+
+    def validate(self):
+        logging.debug("In validate method")
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        #todo add additional validation
+        start_bid = self.str_to_currency(self.start_bid)
+        min_sale_price = self.str_to_currency(self.min_sale_price)
+        now_sale_price = self.str_to_currency(self.now_sale_price, optional=True)
+
+        if start_bid is None or min_sale_price is None:
+            logging.debug("start_bid or min_sale_price is None")
+            return False
+
+        logging.debug("now_sale_price {}".format(now_sale_price))
+        if now_sale_price is not None:
+            if now_sale_price <  min_sale_price:
+                self.now_sale_price.errors.append('Buy now cannot be less than minimum sale')
+                result = False
+            if now_sale_price <  start_bid:
+                self.now_sale_price.errors.append('Buy now cannot be less than start bid')
+                result = False
+        logging.debug("checking start_bid > min_sale_price")
+        if start_bid > min_sale_price:
+            logging.debug("start_bid > min_sale_price")
+            self.start_bid.errors.append('Starting bid cannot be greater than minimum sale')
+            result = False
+
+        return result
+
+    def str_to_currency(self, field, optional=False):
+        error = "Cannot convert input to US currency."
+        amount = None
+        logging.debug("field.data='{}'".format(field.data))
+        if optional and field.data == "":
+            logging.debug("jumping out cause it is optional")
+            return amount
+
+        str_amount = field.data.strip('$').replace(',', '')
+        has_decimal_place = str_amount.count('.')
+        if has_decimal_place == 1:
+            decimal_place_index = str_amount.find('.')
+            logging.debug("decimal_place_index={} after_dec={} len={}".
+                          format(decimal_place_index,
+                                 str_amount[decimal_place_index:],
+                                 len(str_amount[decimal_place_index:])))
+            should_be_three = len(str_amount[decimal_place_index:])
+            if should_be_three == 3:
+                try:
+                    amount = float(str_amount)
+                    field.data = "{0:.2f}".format(amount)
+                except ValueError:
+                    field.errors.append(error)
+            else:
+                logging.debug("yes we have and error")
+                field.errors.append(error)
+        else:
+            field.errors.append(error+" please be sure to include dollars and cents 100.00")
+
+        return amount
 
 class SearchForm(FlaskForm):
-    keyword = StringField('keyword', validators=[DataRequired()])
+    keyword = StringField('keyword', validators=[DataRequired("Keyword data is required")])
     category_choices, error = Category.get_categories()
-    category = SelectField('category', choices=category_choices, validators=[DataRequired()])
-    minimum_price = DecimalField('minimum_price', validators=[DataRequired()])
-    maximum_price = DecimalField('maximum_price', validators=[DataRequired()])
-    condition_choices = [('50', 'New'), ('40', 'Very Good'), ('30', 'Good'), ('20', 'Fair'), ('10', 'Poor')]
-    condition = SelectField('condition', choices=condition_choices, validators=[DataRequired()])
+    category_choices.insert(0,(0,' '))
+    category = SelectField('category', choices=category_choices)
+    is_dollar_amt="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}$"
+
+    minimum_price = DecimalField('minimum_price',validators=[Optional()])
+    maximum_price = DecimalField('maximum_price',validators=[Optional()])
+    condition_choices = [(0,' '),(50, 'New'), (40, 'Very Good'), (30, 'Good'), (20, 'Fair'), (10, 'Poor')]
+    condition = SelectField('condition', choices=condition_choices)
+    submit = SubmitField('Search')
+
 
 class ItemDescriptionForm(FlaskForm):
     item_id = StringField('item_id')

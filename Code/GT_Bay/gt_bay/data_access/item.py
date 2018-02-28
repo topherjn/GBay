@@ -10,8 +10,9 @@ logger.setLevel(logging.DEBUG)
 
 class Item(BaseDAO):
     def __init__(self, item_id, item_name, description, category_id, item_condition, returnable,
-                 starting_bid, minimum_sale, auction_length, get_it_now,
-                 auction_start_date_time, listing_user_id):
+                 starting_bid, minimum_sale, auction_length,
+                 auction_start_date_time, listing_username, get_it_now=None):
+        logging.debug("in constructor")
         self._item_id = item_id
         self._item_name = item_name
         self._description = description
@@ -23,7 +24,7 @@ class Item(BaseDAO):
         self._auction_length = auction_length
         self._get_it_now = get_it_now
         self._auction_start_date_time = auction_start_date_time
-        self._listing_user_id = listing_user_id
+        self._listing_username = listing_username
 
 
     def persist(self):
@@ -31,9 +32,9 @@ class Item(BaseDAO):
         ret_val = None
         error = None
 
-        insert_sql="INSERT INTO ITEM(item_name, description, item_condition, returnable, starting_bid, " \
-                   "minimum_sale, get_it_now, auction_length, category_id, listing_user_id) " \
-                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, {}, {})".format(
+        insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
+                   "minimum_sale, get_it_now, auction_length, category_id, listing_username) " \
+                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, {}, '{}')".format(
             self._item_name,
             self._description,
             self._item_condition,
@@ -43,14 +44,15 @@ class Item(BaseDAO):
             self._get_it_now,
             self._auction_length,
             self._category_id,
-            self._listing_user_id)
+            self._listing_username)
 
-
+        logging.debug(insert_item)
         db = self.get_db()
         try:
             cursor = db.cursor()
-            cursor.execute(insert_sql)
+            cursor.execute(insert_item)
             db.commit()
+            ret_val = cursor.lastrowid
         except:
             db.rollback()
             error = "Unable to create item please try again later."

@@ -7,16 +7,25 @@
      </div>
 
       <form class="form-signin" method="post" name="search">
-          {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+          {% if error %}<p class=error style="color: red;"><strong>Error:</strong> {{ error }}</p>{% endif %}
           {{ form.hidden_tag() }}
       <div class="panel-body">
         <label for="keyword" >Keyword:</label> {{ form.keyword(id="keyword", class="form-control", size=50) }}
+          {% for error in form.keyword.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
         <label for="category" >Category:</label> {{ form.category(id="category", class="form-control") }}
         <label for="minimum_price" >Minimum Price:</label> {{ form.minimum_price(id="minimum_price", class="form-control", size=20) }}
+          {% for error in form.minimum_price.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
         <label for="maximum_price" >Maximum Price:</label> {{ form.maximum_price(id="maximum_price", class="form-control", size=20) }}
+          {% for error in form.maximum_price.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
         <label for="condition" >Condition at least:</label> {{ form.condition(id="condition", class="form-control") }}
           <br/>
-        <button class="btn btn-lg btn-primary" type="submit">Search</button>
+        {{ form.submit(class="btn btn-lg btn-primary") }}
         <a href="index">Cancel</a>
       </div>
       </form>
