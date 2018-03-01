@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+from datetime import timedelta
 
 from pymysql import IntegrityError
 
@@ -22,6 +24,8 @@ class Item(BaseDAO):
         self._starting_bid = starting_bid
         self._minimum_sale = minimum_sale
         self._auction_length = auction_length
+        now = datetime.now() + timedelta(days= int(auction_length))
+        self._auction_end_time = now.strftime('%Y-%m-%d %H:%M:%S')
         self._get_it_now = get_it_now
         self._auction_start_date_time = auction_start_date_time
         self._listing_username = listing_username
@@ -33,8 +37,8 @@ class Item(BaseDAO):
         error = None
 
         insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-                   "minimum_sale, get_it_now, auction_length, category_id, listing_username) " \
-                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, {}, '{}')".format(
+                   "minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username) " \
+                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, '{}', {}, '{}')".format(
             self._item_name,
             self._description,
             self._item_condition,
@@ -43,6 +47,7 @@ class Item(BaseDAO):
             self._minimum_sale,
             self._get_it_now,
             self._auction_length,
+            self._auction_end_time,
             self._category_id,
             self._listing_username)
 

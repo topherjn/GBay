@@ -4,13 +4,13 @@
 USE GT_BAY;
 
 -- Start fresh delete existing tables
-DROP TABLE IF EXISTS Category;
-DROP TABLE IF EXISTS GTBayUser;
-DROP TABLE IF EXISTS RegularUser;
-DROP TABLE IF EXISTS AdminUser;
-DROP TABLE IF EXISTS Item;
-DROP TABLE IF EXISTS Rating;
 DROP TABLE IF EXISTS Bid;
+DROP TABLE IF EXISTS Rating;
+DROP TABLE IF EXISTS Item;
+DROP TABLE IF EXISTS AdminUser;
+DROP TABLE IF EXISTS RegularUser;
+DROP TABLE IF EXISTS Category;
+
 
 -- Create the tables
 CREATE TABLE Category (
@@ -45,9 +45,9 @@ CREATE TABLE Item(
    minimum_sale DECIMAL(10,2) NOT NULL,
    auction_length INT NOT NULL,
    get_it_now DECIMAL(10,2) NULL,
-   start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   category_id INT NOT NULL, -- FKey
-   listing_username VARCHAR(50) NOT NULL, -- FKey
+   auction_end_time TIMESTAMP NOT NULL,
+   category_id INT NOT NULL,
+   listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
    FOREIGN KEY (listing_username) REFERENCES RegularUser(username),
    PRIMARY KEY (item_id)
@@ -98,18 +98,18 @@ INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user03', 'password', 'Anne', 'Smith');
 
 
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('clock radio', 'digital clock radio', 1, false, 15.00, 20.00, 30.00, 5, 3, 'user02');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('moby dick', 'classic book', 1, false, 10.00, 15.00, 20.00, 3, 2, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('ipod classic', 'like new ipod', 2, false, 15.00, 20.00, 30.00, 5, 3, 'user02');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('fishing boat', '12 foot fishing boat', 1, false, 150.00, 200.00, 300.00, 5, 5, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('clock radio', 'digital clock radio', 1, false, 16.00, 21.00, 31.00, 5, 3, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, category_id, listing_username)
-   VALUES ('surfboard', 'retro board', 1, false, 160.00, 210.00, NULL, 5, 3, 'user03');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('clock radio', 'digital clock radio', 1, false, 15.00, 20.00, 30.00, 5, '2018-03-06 09:01:52', 3, 'user02');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('moby dick', 'classic book', 1, false, 10.00, 15.00, 20.00, 3, '2018-03-03 09:01:52', 2, 'user03');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('ipod classic', 'like new ipod', 2, false, 15.00, 20.00, 30.00, 5, '2018-03-06 09:01:52', 3, 'user02');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('fishing boat', '12 foot fishing boat', 1, false, 150.00, 200.00, 300.00, 5, '2018-03-06 09:01:52', 5, 'user03');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('clock radio', 'digital clock radio', 1, false, 16.00, 21.00, 31.00, 5, '2018-03-06 09:01:52', 3, 'user03');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
+   VALUES ('surfboard', 'retro board', 1, false, 160.00, 210.00, NULL, 5, '2018-03-06 09:01:52', 3, 'user03');
 
 
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user02', 1, 5, 'great product');
@@ -121,4 +121,10 @@ INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 30.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 2, 19.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 3, 18.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 3, 21.00);
+
+
+
+
+
+  
 
