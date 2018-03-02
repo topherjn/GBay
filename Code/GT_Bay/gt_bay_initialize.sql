@@ -97,7 +97,6 @@ INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user02', 'password', 'Amy', 'Smith');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user03', 'password', 'Anne', 'Smith');
 
-
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
    VALUES ('clock radio', 'digital clock radio', 1, false, 15.00, 20.00, 30.00, 5, '2018-03-06 09:01:52', 3, 'user02');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username)
@@ -117,7 +116,11 @@ INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 1, 3
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 2, 3, 'to long');
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user01', 2, 5, 'great book');
 
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 30.00);
+INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 15.00);
+INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 1, 16.00);
+INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 17.00);
+INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 1, 18.00);
+INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 20.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 2, 19.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 3, 18.00);
 INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 3, 21.00);

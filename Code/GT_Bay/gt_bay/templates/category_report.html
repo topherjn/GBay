@@ -1,8 +1,38 @@
 {% extends "layout_with_menu.html" %}
 {% block body %}
     <div class="container">
-        <h1>Category Report</h1>
-        <a href="index">Done</a>
-      </form>
+    <div class="panel panel-primary">
+     <div class="panel-heading">
+            <h3 class="panel-title">Category Report</h3>
+     </div>
+
+            <table class="table table-striped custab">
+              <thead>
+
+              <tr>
+                <th>Category</th>
+                <th>Total Items</th>
+                <th>Min Price</th>
+                <th>Max Price</th>
+                <th>Average Price</th>
+              </tr>
+              </thead>
+                <tr>
+                <th>Art</th>
+                <th>1</th>
+                <th>100</th>
+                <th>200</th>
+                <th>150</th>
+              </tr>
+            <!--
+
+            -->
+            </table>
+
+
+
     </div>
+     <a href="index">Done</a>
+    </div>
+
 {% endblock %}
