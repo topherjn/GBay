@@ -24,17 +24,17 @@ CREATE TABLE Category (
 
 
 CREATE TABLE RegularUser(
-	 username VARCHAR(50) NOT NULL,
-	 password VARCHAR(50) NOT NULL,
-	 first_name VARCHAR(50) NOT NULL,
-	 last_name VARCHAR(50) NOT NULL,
+   username VARCHAR(50) NOT NULL,
+   password VARCHAR(50) NOT NULL,
+   first_name VARCHAR(50) NOT NULL,
+   last_name VARCHAR(50) NOT NULL,
    PRIMARY KEY (username)
 );
 
 
 CREATE TABLE AdminUser(
-	 username VARCHAR(50) NOT NULL,
-	 position VARCHAR(50) NULL,
+   username VARCHAR(50) NOT NULL,
+   position VARCHAR(50) NOT NULL,
    FOREIGN KEY (username) REFERENCES RegularUser(username),
    PRIMARY KEY (username)
 );
