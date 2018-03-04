@@ -33,7 +33,7 @@ VALUES (@$username, @$password,
 -- Add Item
 
 -- Test data
-SET @$itemName='GT T-Shirt', @$description='100 Percent cotton T', @$itemCondition=1, @$returnable=false;
+SET @$itemName='GT T-Shirt', @$description='100 Percent cotton T', @$itemCondition=5, @$returnable=false;
 SET @$startingBid='10.00', @$minimumSale=15.00, @$getItNow=20.00, @$auctionLength=5;
 SET @$categoryId=3, @$listingUsername='user01';
 
@@ -43,18 +43,99 @@ SELECT category_id, category_name FROM CATEGORY ORDER BY category_id;
 
 -- Persist Values
 INSERT INTO Item (item_name, description, item_condition, returnable,
-                  starting_bid, minimum_sale, get_it_now, auction_length,
+                  starting_bid, min_sale_price, get_it_now_price, auction_length,
                   auction_end_time, category_id, listing_username)
 VALUES (@$itemName, @$description, @$itemCondition, @$returnable,
-        @$startingBid, @$minimumSale, @$getItNow, @$auctionLength,
-        DATE_ADD(NOW(), INTERVAL @$auctionLength DAY), @$categoryId, @$listingUsername);
-
+                    @$startingBid, @$minimumSale, @$getItNow, @$auctionLength,
+                    DATE_ADD(NOW(), INTERVAL @$auctionLength DAY), @$categoryId, @$listingUsername);
 
 -- ---------------------------------------------------------------------------------------
 -- Item Search
 
--- TO BE COMPLETED
+-- Test data
+SET @$keyword='GT T-Shirt', @$categoryName=NULL, @$minPrice=11.00, @$maxPrice=100.00, @$conditionAtLeast=4;
+SET @$keyword='GT T-Shirt', @$categoryName='Electronics', @$minPrice=6.00, @$maxPrice=9.00, @$conditionAtLeast=NULL;
+
+SELECT
+  Item.item_id,
+  item_name,
+  bid_amount AS current_bid,
+  username   AS high_bidder,
+  get_it_now_price,
+  auction_end_time
+FROM Item
+  INNER JOIN Category
+    ON Item.category_id = Category.category_id
+  LEFT JOIN
+  (SELECT
+     item_id,
+     bid_amount,
+     username
+   FROM Bid b1 NATURAL JOIN
+     (SELECT
+        item_id,
+        max(bid_amount) AS bid_amount
+      FROM Bid
+      GROUP BY item_id) AS b2)
+    AS CurrentBid
+    ON Item.item_id = CurrentBid.item_id
+WHERE auction_end_time > NOW()
+      AND (item_name LIKE CONCAT('%', @$keyword, '%')
+           OR description LIKE CONCAT('%', @$keyword, '%'))
+      AND (@$category IS NULL
+           OR category_name = @$category)
+      AND (@$minPrice IS NULL OR
+           IF(bid_amount IS NULL, starting_bid, bid_amount)
+           >= @$minPrice)
+      AND (@$maxPrice IS NULL OR
+           IF(bid_amount IS NULL, starting_bid, bid_amount)
+           <= @$maxPrice)
+      AND (@$conditionAtLeast IS NULL OR
+           item_condition >= @$conditionAtLeast)
+ORDER BY auction_end_time;
+
+
 -- Execute Search
+SELECT
+  Item.item_id,
+  item_name,
+  bid_amount AS current_bid,
+  username   AS high_bidder,
+  get_it_now_price,
+  auction_end_time,
+  IF(CurrentBid.bid_amount IS NULL, starting_bid, CurrentBid.bid_amount) AS price,
+  category_name
+FROM Item
+  INNER JOIN Category
+    ON Item.category_id = Category.category_id
+  LEFT JOIN
+  (SELECT
+     item_id,
+     bid_amount,
+     username
+   FROM Bid b1 NATURAL JOIN
+     (SELECT
+        item_id,
+        max(bid_amount) AS bid_amount
+      FROM Bid
+      GROUP BY item_id) AS b2)
+    AS CurrentBid
+    ON Item.item_id = CurrentBid.item_id
+WHERE auction_end_time > NOW()
+      AND (item_name LIKE CONCAT('%', @$keyword, '%')
+           OR description LIKE CONCAT('%', @$keyword, '%'))
+      AND (@$categoryName IS NULL
+           OR category_name = @$categoryName)
+      AND (@$minPrice IS NULL OR
+           (IF(CurrentBid.bid_amount IS NULL, starting_bid, CurrentBid.bid_amount))
+           >= @$minPrice)
+      AND (@$maxPrice IS NULL OR
+           IF(CurrentBid.bid_amount IS NULL, starting_bid, CurrentBid.bid_amount)
+           <= @$maxPrice)
+      AND (@$conditionAtLeast IS NULL OR
+           item_condition >= @$conditionAtLeast)
+ORDER BY auction_end_time;
+
 
 
 -- ---------------------------------------------------------------------------------------
@@ -67,9 +148,9 @@ SET @$itemId=1;
 SELECT
   i.item_name,
   i.description,
-  c.description,
+  c.category_name,
   i.item_condition,
-  i.get_it_now,
+  i.get_it_now_price,
   i.returnable,
   i.auction_end_time
 FROM Item i INNER JOIN Category c ON i.category_id = c.category_id
@@ -123,7 +204,7 @@ INSERT INTO Bid
   SELECT
     @$username,
     item_id,
-    get_it_now,
+    get_it_now_price,
     @$currentTime
   FROM Item
   WHERE Item.item_id = @$itemID AND
@@ -146,7 +227,7 @@ WHERE item_id = @$itemId;
 -- View Item Ratings
 
 -- Test data
-SET @$itemId=2;
+SET @$itemId=3;
 
 -- select item name
 SELECT item_name
@@ -159,10 +240,10 @@ FROM Rating
 WHERE item_id = @$itemId;
 
 -- rating details
-SELECT username as ratingUsername, numstars, date_time, comments
+SELECT username as ratingUsername, numstars, rating_time, comments
 FROM Rating
 WHERE item_id = @$itemId
-ORDER BY date_time DESC;
+ORDER BY rating_time DESC;
 
 
 -- ---------------------------------------------------------------------------------------
@@ -186,6 +267,24 @@ WHERE username = @$username AND item_id = @$itemId;
 SELECT
   i.item_id,
   i.item_name,
+  IF(b.max_bid >= i.min_sale_price, b.max_bid, NULL)
+    AS max_bid,
+  IF(b.max_bid >= i.min_sale_price, b.username, NULL)
+    AS username,
+  i.auction_end_time
+FROM Item i
+  LEFT JOIN (
+              -- SELECT the highest bid amounts FOR ALL auctions
+               SELECT item_id, bid_amount AS max_bid, username
+                      FROM Bid b1 NATURAL JOIN
+            (SELECT item_id, max(bid_amount) AS bid_amount
+                                             FROM Bid GROUP BY item_id) AS b2
+            ) b ON b.item_id = i.item_id
+WHERE i.auction_end_time < NOW();
+
+/*SELECT
+  i.item_id,
+  i.item_name,
   b.max_bid,
   b.username,
   i.auction_end_time
@@ -202,21 +301,21 @@ FROM Item i
               GROUP BY b.item_id
             ) b ON b.item_id = i.item_id
 WHERE i.auction_end_time < NOW() AND (b.max_bid IS NULL OR b.max_bid >= i.min_sale_price);
-
+*/
 
 
 -- ---------------------------------------------------------------------------------------
 -- View Category Report
 
 SELECT
-  c.description     AS 'Category',
-  count(get_it_now) AS 'Total Items',
-  min(i.get_it_now) AS 'Min Price',
-  max(get_it_now)   AS 'Max Price',
-  avg(get_it_now)   AS 'Average Price'
+  c.category_name     AS 'Category',
+  count(get_it_now_price) AS 'Total Items',
+  min(i.get_it_now_price) AS 'Min Price',
+  max(get_it_now_price)   AS 'Max Price',
+  avg(get_it_now_price)   AS 'Average Price'
 FROM category c LEFT OUTER JOIN item i ON c.category_id = i.category_id
 GROUP BY c.category_id
-ORDER BY c.description;
+ORDER BY c.category_name;
 
 
 -- ---------------------------------------------------------------------------------------
@@ -232,6 +331,21 @@ GROUP BY listing_username;
 
 -- Sold Items
 SELECT
+  listing_username,
+  COUNT(*)
+FROM Bid b1
+  NATURAL JOIN
+  (SELECT
+     item_id,
+     max(bid_amount) AS bid_amount
+   FROM Bid
+   GROUP BY item_id) AS b2
+  NATURAL JOIN Item i
+WHERE auction_end_time < NOW()
+      AND bid_amount >= min_sale_price
+GROUP BY listing_username;
+
+/*SELECT
   b.username,
   count(i.item_id)
 FROM Item i
@@ -247,7 +361,22 @@ FROM Item i
               GROUP BY b.item_id
             ) b ON b.item_id = i.item_id
 WHERE i.auction_end_time < NOW() AND (b.max_bid >= i.minimum_sale)
-GROUP BY b.username;
+GROUP BY b.username;*/
+
+SELECT
+  username,
+  COUNT(*)
+FROM Bid b1
+  NATURAL JOIN
+  (SELECT
+     item_id,
+     max(bid_amount) AS bid_amount
+   FROM Bid
+   GROUP BY item_id) AS b2
+  NATURAL JOIN Item i
+WHERE auction_end_time < NOW()
+      AND bid_amount >= min_sale_price
+GROUP BY username;
 
 
 SELECT username, COUNT(username)
