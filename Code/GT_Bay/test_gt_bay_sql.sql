@@ -363,6 +363,7 @@ FROM Item i
 WHERE i.auction_end_time < NOW() AND (b.max_bid >= i.minimum_sale)
 GROUP BY b.username;*/
 
+-- Purchased
 SELECT
   username,
   COUNT(*)

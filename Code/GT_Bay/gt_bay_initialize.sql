@@ -1,7 +1,7 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
 
-CREATE DATABASE cs6400_spr18_team047;
+-- CREATE DATABASE cs6400_spr18_team047;
 USE cs6400_spr18_team047;
 
 
@@ -119,16 +119,15 @@ INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 1, 3
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 2, 3, 'to long');
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user01', 2, 5, 'great book');
 
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 15.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 1, 16.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 17.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 1, 18.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 1, 20.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 2, 19.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user02', 3, 18.00);
-INSERT INTO Bid(username, item_id, bid_amount) VALUES ('user03', 3, 21.00);
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 15.00, '2018-03-03 09:01:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 1, 16.00, '2018-03-03 09:02:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 17.00, '2018-03-03 09:03:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 1, 18.00, '2018-03-03 09:04:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 20.00, '2018-03-03 09:05:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 2, 19.00, '2018-03-03 09:06:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 3, 18.00, '2018-03-03 09:07:52');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 3, 21.00, '2018-03-03 09:08:52');
 
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 3, 21.00, '2018-03-03 09:01:52');
 
 
 
