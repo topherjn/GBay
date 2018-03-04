@@ -38,7 +38,7 @@ SET @$startingBid='10.00', @$minimumSale=15.00, @$getItNow=20.00, @$auctionLengt
 SET @$categoryId=3, @$listingUsername='user01';
 
 -- Populate Category Dropdown
-SELECT category_id, description FROM CATEGORY ORDER BY category_id;
+SELECT category_id, category_name FROM CATEGORY ORDER BY category_id;
 
 
 -- Persist Values
@@ -70,6 +70,7 @@ SELECT
   c.description,
   i.item_condition,
   i.get_it_now,
+  i.returnable,
   i.auction_end_time
 FROM Item i INNER JOIN Category c ON i.category_id = c.category_id
 WHERE i.item_id = @$itemId;
@@ -108,7 +109,25 @@ VALUES (@$username, @$itemId, @$bidAmount);
 -- ---------------------------------------------------------------------------------------
 -- Get It Now
 
--- TO BE COMPLETED
+-- Test data
+SET @$username='user01', @$itemId=3, @$currentTime='2018-03-01 14:01:52';
+
+UPDATE Item
+SET auction_end_time =
+IF(auction_end_time > @$currentTime,
+   @$currentTime, auction_end_time)
+WHERE item_id = @$itemId;
+
+INSERT INTO Bid
+(username, item_id, bid_amount, bid_time)
+  SELECT
+    @$username,
+    item_id,
+    get_it_now,
+    @$currentTime
+  FROM Item
+  WHERE Item.item_id = @$itemID AND
+        Item.auction_end_time = @$currentTime;
 
 
 -- ---------------------------------------------------------------------------------------
@@ -165,12 +184,25 @@ WHERE username = @$username AND item_id = @$itemId;
 -- Compute Winner / View Auction Results
 
 SELECT
-  b.item_id          AS 'ID',
-  max(b.bid_amount)  AS 'Sale Price',
-  b.username         AS 'Winner',
-  i.auction_end_time AS 'Auction Ended'
-FROM Item i LEFT OUTER JOIN Bid b ON i.item_id = b.item_id
-WHERE i.auction_end_time < NOW() AND b.bid_time < i.auction_end_time;
+  i.item_id,
+  i.item_name,
+  b.max_bid,
+  b.username,
+  i.auction_end_time
+FROM Item i
+  LEFT JOIN (
+              -- Select the highest bid amounts for all ended auctions
+              SELECT
+                b.item_id,
+                b.username,
+                max(b.bid_amount) AS 'max_bid',
+                b.bid_time
+              FROM Bid b
+              WHERE b.bid_time < NOW()
+              GROUP BY b.item_id
+            ) b ON b.item_id = i.item_id
+WHERE i.auction_end_time < NOW() AND (b.max_bid IS NULL OR b.max_bid >= i.min_sale_price);
+
 
 
 -- ---------------------------------------------------------------------------------------
@@ -190,5 +222,36 @@ ORDER BY c.description;
 -- ---------------------------------------------------------------------------------------
 -- View User Report
 
--- TO BE COMPLETED
+-- listed items
+SELECT
+  listing_username,
+  COUNT(listing_username)
+FROM item
+GROUP BY listing_username;
+
+
+-- Sold Items
+SELECT
+  b.username,
+  count(i.item_id)
+FROM Item i
+  LEFT JOIN (
+              -- Select the highest bid amounts for all ended auctions
+              SELECT
+                b.item_id,
+                b.username,
+                max(b.bid_amount) AS 'max_bid',
+                b.bid_time
+              FROM Bid b
+              WHERE b.bid_time < NOW()
+              GROUP BY b.item_id
+            ) b ON b.item_id = i.item_id
+WHERE i.auction_end_time < NOW() AND (b.max_bid >= i.minimum_sale)
+GROUP BY b.username;
+
+
+SELECT username, COUNT(username)
+FROM rating
+GROUP BY username;
+
 
