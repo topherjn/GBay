@@ -63,7 +63,7 @@ def register():
                                          request.form['first_name'], request.form['last_name'])
         if user is not None:
             session['user'] = user.to_json()
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
 
     logging.debug("OUT register method")
     return render_template('register.html',

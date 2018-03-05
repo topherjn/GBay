@@ -40,7 +40,7 @@ class ListNewItemForm(FlaskForm):
     category_choices, error = Category.get_categories()
     # category_choices = [(1, 'Art'), (2, 'Books'), (3, 'Electronics'), (4, 'Home & Garden'), (5, 'Sporting Goods'), (6, 'Toys'), (7, 'Other')]
     category = SelectField('category', coerce=int, choices=category_choices)
-    condition_choices = [(50, 'New'), (40, 'Very Good'), (30, 'Good'), (20, 'Fair'), (10, 'Poor')]
+    condition_choices = [(5, 'New'), (4, 'Very Good'), (3, 'Good'), (2, 'Fair'), (1, 'Poor')]
     condition = SelectField('condition', coerce=int, choices=condition_choices)
     start_bid = StringField('start_bid', validators=[DataRequired("Start bid price is required.")])
     min_sale_price = StringField('min_sale_price', validators=[DataRequired("Minimum sale price is required.")])

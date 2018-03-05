@@ -16,7 +16,7 @@ class Category(BaseDAO):
         error = None
         logging.debug("get_categories")
 
-        select_sql = "SELECT category_id, description FROM CATEGORY ORDER BY category_id"
+        select_sql = "SELECT category_id, category_name FROM CATEGORY ORDER BY category_id"
 
         db = Category.get_db()
         try:

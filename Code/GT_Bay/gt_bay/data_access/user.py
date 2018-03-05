@@ -75,7 +75,6 @@ class User(BaseDAO):
         insert_regular_user="INSERT INTO RegularUser(username, password, first_name, last_name) " \
                    "VALUES ('{}', '{}', '{}', '{}')".format(user_name, password, first_name, last_name)
 
-
         db = User.get_db()
         try:
             cursor = db.cursor()

@@ -9,8 +9,7 @@ class BaseDAO(object):
         return pymysql.connect(host='localhost',
                                  user='root',
                                  password='passw0rd',
-                                 db='GT_BAY')
-
+                                 db='cs6400_spr18_team047')
 
     def find_all(self):
         pass

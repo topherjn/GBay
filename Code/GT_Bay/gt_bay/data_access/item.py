@@ -37,7 +37,7 @@ class Item(BaseDAO):
         error = None
 
         insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-                   "minimum_sale, get_it_now, auction_length, auction_end_time, category_id, listing_username) " \
+                   "min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username) " \
                    "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, '{}', {}, '{}')".format(
             self._item_name,
             self._description,
