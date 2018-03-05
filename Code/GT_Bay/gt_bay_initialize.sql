@@ -24,17 +24,17 @@ CREATE TABLE Category (
 
 
 CREATE TABLE RegularUser(
-	 username VARCHAR(50) NOT NULL,
-	 password VARCHAR(50) NOT NULL,
-	 first_name VARCHAR(50) NOT NULL,
-	 last_name VARCHAR(50) NOT NULL,
+   username VARCHAR(50) NOT NULL,
+   password VARCHAR(50) NOT NULL,
+   first_name VARCHAR(50) NOT NULL,
+   last_name VARCHAR(50) NOT NULL,
    PRIMARY KEY (username)
 );
 
 
 CREATE TABLE AdminUser(
-	 username VARCHAR(50) NOT NULL,
-	 position VARCHAR(50) NULL,
+   username VARCHAR(50) NOT NULL,
+   position VARCHAR(50) NOT NULL,
    FOREIGN KEY (username) REFERENCES RegularUser(username),
    PRIMARY KEY (username)
 );
@@ -46,10 +46,10 @@ CREATE TABLE Item(
    item_condition ENUM ('Poor','Fair','Good','Very Good','New') NOT NULL,
    returnable BOOLEAN NOT NULL DEFAULT false,
    starting_bid DECIMAL(10,2) NOT NULL,
-   min_sale_price DECIMAL(10,2) NOT NULL,
+   min_sale_price DECIMAL(10,2) NOT NULL CHECK(min_sale_price >= starting_bid),
    auction_length INT NOT NULL CHECK(auction_length = 1 or auction_length = 3 or auction_length = 5 or auction_length = 7),
-   get_it_now_price DECIMAL(10,2) NULL,
-   auction_end_time TIMESTAMP NOT NULL,
+   get_it_now_price DECIMAL(10,2) NULL CHECK(get_it_now_price >= min_sale_price),
+   auction_end_time TIMESTAMP NOT NULL CHECK(TIMESTAMP > CURRENT_TIMESTAMP),
    category_id INT NOT NULL,
    listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
@@ -61,7 +61,7 @@ CREATE TABLE Item(
 CREATE TABLE Rating(
    username VARCHAR(50) NOT NULL,
    item_id INT NOT NULL,
-   numstars INT NOT NULL CHECK(nbr_stars < 6),
+   numstars INT unsigned NOT NULL CHECK(nbr_stars < 6),
    comments TEXT NULL,
    rating_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    FOREIGN KEY (username) REFERENCES RegularUser(username),
