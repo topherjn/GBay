@@ -116,13 +116,14 @@ class SearchForm(FlaskForm):
     keyword = StringField('keyword', validators=[DataRequired("Keyword data is required")])
     category_choices, error = Category.get_categories()
     category_choices.insert(0,(0,' '))
-    category = SelectField('category', choices=category_choices)
+    category = SelectField('category',coerce=int, choices=category_choices)
+
     is_dollar_amt="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}$"
 
     minimum_price = DecimalField('minimum_price',validators=[Optional()])
     maximum_price = DecimalField('maximum_price',validators=[Optional()])
-    condition_choices = [(0,' '),(50, 'New'), (40, 'Very Good'), (30, 'Good'), (20, 'Fair'), (10, 'Poor')]
-    condition = SelectField('condition', choices=condition_choices)
+    condition_choices = [(0,' '),(5, 'New'), (4, 'Very Good'), (3, 'Good'), (2, 'Fair'), (1, 'Poor')]
+    condition = SelectField('condition',coerce=int, choices=condition_choices)
     submit = SubmitField('Search')
 
 

@@ -2,6 +2,7 @@ from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemDesc
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from data_access.user import User
 from data_access.item import Item
+from data_access.report import Report
 from datetime import datetime
 from dateutil import tz
 import time
@@ -129,6 +130,23 @@ def search():
     logging.debug("search.....")
     if form.validate_on_submit():
         logging.debug("form.validate_on_submit()")
+        minimum_price = "NULL"
+        if request.form['minimum_price'] != "":
+            minimum_price = request.form['minimum_price']
+
+        maximum_price = "NULL"
+        if request.form['maximum_price'] != "":
+            maximum_price = request.form['maximum_price']
+
+        item = Item()
+        item.search(
+            request.form['keyword'],
+            request.form['category'],
+            minimum_price,
+            maximum_price,
+            request.form['condition']
+        )
+
         # todo this needs clean up and DB on unique username
         return redirect(url_for('search_results'))
 
@@ -165,7 +183,9 @@ def auction_results():
 
 @app.route('/category_report')
 def category_report():
-    return render_template('category_report.html', ui_data={})
+    report = Report()
+    cat_report, error = report.category_report()
+    return render_template('category_report.html', cat_report=cat_report, error=error)
 
 @app.route('/user_report')
 def user_report():

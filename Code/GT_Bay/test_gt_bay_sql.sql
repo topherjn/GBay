@@ -385,3 +385,41 @@ FROM rating
 GROUP BY username;
 
 
+-- ------------------------------------------------------------------
+SELECT
+              Item.item_id,
+              item_name,
+              bid_amount AS current_bid,
+              username   AS high_bidder,
+              get_it_now_price,
+              auction_end_time
+            FROM Item
+              INNER JOIN Category
+                ON Item.category_id = Category.category_id
+              LEFT JOIN
+              (SELECT
+                 item_id,
+                 bid_amount,
+                 username
+               FROM Bid b1 NATURAL JOIN
+                 (SELECT
+                    item_id,
+                    max(bid_amount) AS bid_amount
+                  FROM Bid
+                  GROUP BY item_id) AS b2)
+                AS CurrentBid
+                ON Item.item_id = CurrentBid.item_id
+            WHERE auction_end_time > NOW()
+                  AND (item_name LIKE CONCAT('%', 'ipod', '%')
+                       OR description LIKE CONCAT('%', 'ipod', '%'))
+                  AND (0 IS NULL
+                       OR category_name = 0)
+                  AND (NULL IS NULL OR
+                       IF(bid_amount IS NULL, starting_bid, bid_amount)
+                       >= NULL)
+                  AND ( NULL IS NULL OR
+                       IF(bid_amount IS NULL, starting_bid, bid_amount)
+                       <= NULL )
+                  AND (0 IS NULL OR
+                       item_condition >= 0)
+            ORDER BY auction_end_time
