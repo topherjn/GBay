@@ -4,8 +4,6 @@ from data_access.user import User
 from data_access.item import Item
 from data_access.report import Report
 from datetime import datetime
-from dateutil import tz
-import time
 import logging
 
 logger = logging.getLogger()
@@ -139,16 +137,17 @@ def search():
             maximum_price = request.form['maximum_price']
 
         item = Item()
-        item.search(
+        search_results, error = item.search(
             request.form['keyword'],
             request.form['category'],
             minimum_price,
             maximum_price,
             request.form['condition']
         )
+        if search_results is not None:
+            return render_template('search_results.html', search_results=search_results, error=error)
 
-        # todo this needs clean up and DB on unique username
-        return redirect(url_for('search_results'))
+
 
     logging.debug("form.errors={}".format(form.errors))
 
@@ -158,9 +157,22 @@ def search():
                            error=error)
 
 
-@app.route('/item_description', methods=['GET', 'POST'])
-def item_description():
+@app.route('/get_item', methods=['GET'])
+def get_item():
+    item_id = request.args.get('id')
     form = ItemDescriptionForm()
+    item = Item()
+    ret_val, error = item.get_item(item_id)
+    if ret_val is not None:
+        form.item_id.data = item_id
+        form.item_name.data = ret_val[0]
+        form.description.data = ret_val[1]
+        #form.category.data = ret_val['category_name']
+        #form.condition.data = ret_val['item_condition']
+        form.returns_accepted.data = ret_val[5]
+        form.now_sale_price.data = ret_val[4]
+        form.auction_end_dt.data = ret_val[6]
+
     error = None
     return render_template('item_description.html', ui_data={},form=form,
                            error=error)

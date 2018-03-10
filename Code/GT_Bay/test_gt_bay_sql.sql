@@ -53,7 +53,7 @@ VALUES (@$itemName, @$description, @$itemCondition, @$returnable,
 -- Item Search
 
 -- Test data
-SET @$keyword='GT T-Shirt', @$categoryName=NULL, @$minPrice=11.00, @$maxPrice=100.00, @$conditionAtLeast=4;
+SET @$keyword='clock', @$categoryName=NULL, @$minPrice=NULL, @$maxPrice=NULL, @$conditionAtLeast=NULL;
 SET @$keyword='GT T-Shirt', @$categoryName='Electronics', @$minPrice=6.00, @$maxPrice=9.00, @$conditionAtLeast=NULL;
 
 SELECT

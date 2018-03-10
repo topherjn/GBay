@@ -36,6 +36,38 @@ class Item(BaseDAO):
         self._listing_username = listing_username
 
 
+    def get_item(self, item_id):
+        ret_val = None
+        error = None
+
+        get_item_sql = """
+        SELECT
+          i.item_name,
+          i.description,
+          c.category_name,
+          i.item_condition,
+          i.get_it_now_price,
+          i.returnable,
+          i.auction_end_time
+        FROM Item i INNER JOIN Category c ON i.category_id = c.category_id
+        WHERE i.item_id = {item_id};
+        """.format(item_id=item_id)
+
+        db = Item.get_db()
+        try:
+            cursor = db.cursor()
+            cursor.execute(get_item_sql)
+            ret_val = cursor.fetchone()
+            if ret_val is None:
+                error = "Item ID not found"
+
+            logging.debug("get_item {}".format(ret_val))
+        except:
+            error = "Unable to connect please try again later."
+
+        return ret_val, error
+
+
     def persist(self):
         logging.debug("persist item")
         ret_val = None
@@ -124,6 +156,7 @@ class Item(BaseDAO):
             cursor.execute(search_sql)
             logging.debug("after  cursor.execute(search_sql)")
             ret_val = cursor.fetchall()
+            logging.debug("ret_val {}".format(ret_val))
             if ret_val is None:
                 error = "No results found"
 
