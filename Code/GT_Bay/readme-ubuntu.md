@@ -1,4 +1,4 @@
-Running GT_Bay on Ubuntu Server 16.04 follow the below guidelines:
+**Running GT_Bay on Ubuntu Server 16.04 follow the below guidelines:**
 
 1. Install on Ubuntu Server 16.04
     follow and standard install practice
