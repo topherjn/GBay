@@ -114,23 +114,31 @@ class ListNewItemForm(FlaskForm):
         return amount
 
 class SearchForm(FlaskForm):
+    """Defines the fields of the Search Form and performs validation on said fields.
+
+    """
+
     keyword = StringField('keyword', validators=[DataRequired("Keyword data is required")])
     category_choices, error = Category.get_categories()
-    category_choices.insert(0,(0,' '))
-    category = SelectField('category',coerce=int, choices=category_choices)
+    category_choices.insert(0,(0,' '))  # add blank, default "category"
+    category = SelectField('category', coerce=int, choices=category_choices)
 
     minimum_price = DecimalField('minimum_price',validators=[Optional()])
     maximum_price = DecimalField('maximum_price',validators=[Optional()])
     condition_choices = [(0,' '),(5, 'New'), (4, 'Very Good'), (3, 'Good'), (2, 'Fair'), (1, 'Poor')]
-    condition = SelectField('condition',coerce=int, choices=condition_choices)
+    condition = SelectField('condition', coerce=int, choices=condition_choices)
     submit = SubmitField('Search')
 
     def validate(self):
+        """Performs validation on Search Form fields.
+
+        :return: False is returned if an error is encountered. If all is well, True is returned.
+        """
+
         logging.debug("\n\nSearchForm: In validate method")
-        error = False
         result = True
         if not FlaskForm.validate(self):  # only using this for the "DataRequired" validator for the keyword field
-            error = True
+            result = False
 
         # minimum/maximum price validation: START
         errorMsg = 'Cannot convert input to US currency. Please be sure to include dollars and cents (e.g., 100.00)'
@@ -143,31 +151,28 @@ class SearchForm(FlaskForm):
             logging.debug("minimum_price not USD")
             self.minimum_price.errors = []  # remove built-in, redundant invalid decimal value error
             self.minimum_price.errors.append(errorMsg)
-            error = True
+            result = False
         elif (self.minimum_price.data is not None) and (rePatternObj.match(str(self.minimum_price.data)) is None):
             logging.debug("minimum_price not USD")
             self.minimum_price.errors.append(errorMsg)
-            error = True
+            result = False
         logging.debug("\nself.maximum_price.errors = {}".format(self.maximum_price.errors))
         logging.debug("self.maximum_price.data = {}".format(self.maximum_price.data))
         if ('Not a valid decimal value' in self.maximum_price.errors):
             logging.debug("maximum_price not USD")
             self.maximum_price.errors = []  # remove built-in, redundant invalid decimal value error
             self.maximum_price.errors.append(errorMsg)
-            error = True
+            result = False
         elif (self.maximum_price.data is not None) and (rePatternObj.match(str(self.maximum_price.data)) is None):
             logging.debug("maximum_price not USD")
             self.maximum_price.errors.append(errorMsg)
-            error = True
+            result = False
         if (self.minimum_price.data is not None) and (self.maximum_price.data is not None):
             if self.minimum_price.data > self.maximum_price.data:  # minimum price must be less than maximum price
                 logging.debug("maximum price is not greater than the minimum_price")
                 self.maximum_price.errors.append('The maximum price must be greater than the minimum price.')
-                error = True
+                result = False
         # minimum/maximum price validation: END
-
-        if error:
-            return False
 
         return result
 
