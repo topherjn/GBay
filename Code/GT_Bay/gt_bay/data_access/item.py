@@ -131,8 +131,8 @@ class Item(BaseDAO):
             WHERE auction_end_time > NOW()
                   AND (item_name LIKE CONCAT('%', '{key_word}', '%')
                        OR description LIKE CONCAT('%', '{key_word}', '%'))
-                  AND ({category} IS NULL
-                       OR category_name = {category})
+                  AND ({category} IS NULL OR {category} = 0
+                       OR Item.category_id = {category})
                   AND ({minPrice} IS NULL OR
                        IF(bid_amount IS NULL, starting_bid, bid_amount)
                        >= {minPrice})
