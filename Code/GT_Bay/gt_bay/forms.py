@@ -34,7 +34,6 @@ class RegisterForm(FlaskForm):
         return result
 
 
-
 class ListNewItemForm(FlaskForm):
     item_name = StringField('item_name', validators=[DataRequired()])
     description = TextAreaField('description', validators=[DataRequired()])
@@ -113,6 +112,7 @@ class ListNewItemForm(FlaskForm):
 
         return amount
 
+
 class SearchForm(FlaskForm):
     """Defines the fields of the Search Form and performs validation on said fields.
 
@@ -189,9 +189,9 @@ class ItemDescriptionForm(FlaskForm):
     your_bid = DecimalField('your_bid', validators=[DataRequired()])
     min_bid = DecimalField('min_bid')
 
+
 class ItemRatingForm(FlaskForm):
     item_id = StringField('item_id')
     item_name = StringField('item_name')
     average_rating = StringField('average_rating')
     comments = TextAreaField('comments')
-
