@@ -36,6 +36,7 @@ def login():
         logging.debug("user={}, error={}".format(user, error))
         if user is not None:
             session['user'] = user.to_json()
+            flash('You were logged in.')
             return redirect(url_for('index'))
 
     return render_template('login.html',
