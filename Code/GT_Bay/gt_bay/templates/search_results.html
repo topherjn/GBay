@@ -1,44 +1,43 @@
 {% extends "layout_with_menu.html" %}
 {% block body %}
     <div class="container">
-    <div class="panel panel-primary">
-     <div class="panel-heading">
-            <h3 class="panel-title">Search Results</h3>
-            {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
-     </div>
-
-            {% if search_results %}
-            <table class="table table-striped custab">
-              <thead>
-
-              <tr>
-                <th>ID</th>
-                <th>Item Name</th>
-                <th>Current Bid</th>
-                <th>High Bidder</th>
-                <th>Get It Now Price</th>
-                <th>Auction Ends</th>
-              </tr>
-              </thead>
-              {% for report_line in search_results %}
-                  <tr>
-                <th>{{ report_line['item_id'] }}</th>
-                <th><a href="get_item?id={{ report_line['item_id'] }}">{{ report_line['item_name'] }}</a></th>
-                <th>{{ report_line['current_bid'] }}</th>
-                <th>{{ report_line['high_bidder'] }}</th>
-                <th>{{ report_line['get_it_now_price'] }}</th>
-                <th>{{ report_line['auction_end_time'] }}</th>
-              </tr>
-
-            {% endfor %}
-
-            </table>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Search Results</h3>
+                {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+            </div>
+            {% if search_results and search_results|length > 0 %}
+                <table class="table table-striped custab">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Item Name</th>
+                        <th>Current Bid</th>
+                        <th>High Bidder</th>
+                        <th>Get It Now Price</th>
+                        <th>Auction Ends</th>
+                    </tr>
+                    </thead>
+                    {% for report_line in search_results %}
+                        <tr>
+                            <th>{{ report_line['item_id'] }}</th>
+                            <th>
+                                <a href="get_item?id={{ report_line['item_id'] }}">{{ report_line['item_name'] }}</a>
+                            </th>
+                            <th>{{ report_line['current_bid'] }}</th>
+                            <th>{{ report_line['high_bidder'] }}</th>
+                            <th>{{ report_line['get_it_now_price'] }}</th>
+                            <th>{{ report_line['auction_end_time'] }}</th>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <div>
+                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No items match the supplied search criteria. Please click the &quot;Back to Search&quot; button below to modify your search.</h5>
+                </div>
             {% endif %}
-
-
-
-    </div>
-     <a href="search">Back to Search</a>
+        </div>
+        <a href="search">Back to Search</a>
     </div>
 
 {% endblock %}
