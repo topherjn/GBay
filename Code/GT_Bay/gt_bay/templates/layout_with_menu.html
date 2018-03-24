@@ -36,7 +36,7 @@
 
                 <li>
                     {% if session.get('user') %}
-                        <a href="{{ url_for('logout') }}">Log out:
+                        <a href="{{ url_for('logout') }}" id="logout">Log out:
                             {{ session.user['user_name'] }}
                             {% if session.user['position'] != None %}
                                 | {{ session.user['position'] }}
@@ -50,7 +50,22 @@
 
         </div>
     </div>
-</nav>
+    <script>
+        function killCookie(cname) {
+            document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
 
+        function clearSearch() {
+            killCookie("search_keyword");
+            killCookie("search_category");
+            killCookie("search_minPrice");
+            killCookie("search_maxPrice");
+            killCookie("search_condition");
+        }
+
+        logoutElem = document.getElementById("logout");
+        logoutElem.onclick = function() {clearSearch()};
+    </script>
+</nav>
 {% endblock %}
 

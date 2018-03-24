@@ -6,6 +6,7 @@ from data_access.report import Report
 from datetime import datetime
 import logging
 
+
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -17,6 +18,7 @@ app.config.from_object(__name__)  # load config from this file , flaskr.py
 @app.route('/<path:path>')
 def static_file(path):
     return app.send_static_file(path)
+
 
 @app.route('/')
 @app.route('/index')
@@ -47,6 +49,11 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """Pops session variables and re-routes to index.
+
+    :return: None
+    """
+
     session.pop('user', None)
     flash('You were logged out')
     return redirect(url_for('index'))
@@ -124,18 +131,22 @@ def list_new_item():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    logging.debug("\n\n\tgt_bay_app.search: START")
     form = SearchForm()
     error = None
-    logging.debug("search.....")
+
     if form.validate_on_submit():
-        logging.debug("form.validate_on_submit()")
+        logging.debug("\tgt_bay_app.search: form.validate_on_submit()")
+
         minimum_price = "NULL"
-        if request.form['minimum_price'] != "":
-            minimum_price = request.form['minimum_price']
+        minPriceFormVal = request.form['minimum_price']
+        if minPriceFormVal != "":
+            minimum_price = float(minPriceFormVal)
 
         maximum_price = "NULL"
-        if request.form['maximum_price'] != "":
-            maximum_price = request.form['maximum_price']
+        maxPriceFormVal = request.form['maximum_price']
+        if maxPriceFormVal != "":
+            maximum_price = float(maxPriceFormVal)
 
         item = Item()
         search_results, error = item.search(
@@ -145,17 +156,13 @@ def search():
             maximum_price,
             request.form['condition']
         )
+
         if search_results is not None:
             return render_template('search_results.html', search_results=search_results, error=error)
 
+    logging.debug("\t\tgt_bay_app.search.valid: form.errors={}".format(form.errors))
 
-
-    logging.debug("form.errors={}".format(form.errors))
-
-    return render_template('search.html',
-                           ui_data={},
-                           form=form,
-                           error=error)
+    return render_template('search.html', ui_data={}, form=form, error=error)
 
 
 @app.route('/get_item', methods=['GET'])
