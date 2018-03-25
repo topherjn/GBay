@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS Item;
 DROP TABLE IF EXISTS AdminUser;
 DROP TABLE IF EXISTS RegularUser;
 DROP TABLE IF EXISTS Category;
+DROP VIEW IF EXISTS Category_Report;
 
 
 -- Create the tables
@@ -79,6 +80,16 @@ CREATE TABLE Bid(
    FOREIGN KEY (item_id) REFERENCES Item(item_id),
    PRIMARY KEY (username, item_id, bid_time)
 ); 
+
+CREATE VIEW AS Category_Report
+SELECT	  c.category_name     AS 'Category',
+                count(get_it_now_price) AS 'Total Items',
+                min(i.get_it_now_price) AS 'Min Price',
+                max(get_it_now_price)   AS 'Max Price',
+                ROUND(avg(get_it_now_price),2)   AS 'Average Price'
+            FROM Category c LEFT OUTER JOIN Item i ON c.category_id = i.category_id
+            GROUP BY c.category_id
+            ORDER BY c.category_name;
 
 
 -- **********************************

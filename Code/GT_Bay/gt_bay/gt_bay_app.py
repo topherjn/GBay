@@ -189,6 +189,7 @@ def get_item():
 def item_rating():
     form = ItemRatingForm()
     error = None
+    ratings, error = Rating.get_rating()
     return render_template('item_rating.html', ui_data={},form=form,
                            error=error)
 

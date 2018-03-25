@@ -7,17 +7,7 @@ logger = logging.getLogger()
 
 class Report(BaseDAO):
     def category_report(self):
-        category_report_sql =  """
-            SELECT	  c.category_name     AS 'Category',
-                count(get_it_now_price) AS 'Total Items',
-                min(i.get_it_now_price) AS 'Min Price',
-                max(get_it_now_price)   AS 'Max Price',
-                ROUND(avg(get_it_now_price),2)   AS 'Average Price'
-            FROM Category c LEFT OUTER JOIN Item i ON c.category_id = i.category_id
-            GROUP BY c.category_id
-            ORDER BY c.category_name;
-            """
-
+        category_report_sql =  """SELECT * FROM Category_Report;"""
         ret_val = None
         error = None
 
