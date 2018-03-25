@@ -67,7 +67,6 @@ class Item(BaseDAO):
 
         return ret_val, error
 
-
     def persist(self):
         logging.debug("persist item")
         ret_val = None
