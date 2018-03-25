@@ -17,7 +17,7 @@ class Rating(BaseDAO):
         get_rating_sql =  """
             SELECT username AS ratingUsername, numstars, rating_time, comments
             FROM Rating
-            WHERE item_id = 1
+            WHERE item_id = {item_id}
             ORDER BY rating_time DESC;
             """
 

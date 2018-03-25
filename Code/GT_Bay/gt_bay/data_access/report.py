@@ -13,7 +13,7 @@ class Report(BaseDAO):
 
         db = Report.get_db()
         try:
-
+            
             cursor = db.cursor(pymysql.cursors.DictCursor)
             cursor.execute(category_report_sql)
             ret_val = cursor.fetchall()

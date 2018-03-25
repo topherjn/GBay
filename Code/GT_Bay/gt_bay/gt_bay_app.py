@@ -3,6 +3,7 @@ from flask import Flask, request, session, redirect, url_for, render_template, f
 from data_access.user import User
 from data_access.item import Item
 from data_access.report import Report
+from data_access.rating import Rating
 from datetime import datetime
 import logging
 
@@ -187,12 +188,10 @@ def get_item():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
-    form = ItemRatingForm()
-    error = None
-    ratings, error = Rating.get_rating()
-    return render_template('item_rating.html', ui_data={},form=form,
-                           error=error)
-
+    item_id = request.args.get('id')
+    form = ItemDescriptionForm()
+    rating = Rating()
+    ret_val, error = rating.get_rating(item_id)
 
 @app.route('/search_results')
 def search_results():
