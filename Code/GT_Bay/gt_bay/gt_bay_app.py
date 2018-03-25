@@ -212,6 +212,7 @@ def user_report():
     return render_template('user_report.html', ui_data={})
 
 # Load default config and override config from an environment variable
+app.debug = True
 app.config.update(dict(
     SECRET_KEY='development key',
     WTF_CSRF_ENABLED=True,
