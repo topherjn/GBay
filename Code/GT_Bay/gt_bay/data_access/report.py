@@ -6,6 +6,7 @@ logger = logging.getLogger()
 
 
 class Report(BaseDAO):
+
     def category_report(self):
         category_report_sql =  """
             SELECT
