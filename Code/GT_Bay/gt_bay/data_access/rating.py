@@ -39,4 +39,30 @@ class Rating(BaseDAO):
 
         return ret_val, error
 
+    def get_average_rating(self, item_id):
+        get_avg_rating_sql = """
+                    SELECT AVG(numstars)
+                    FROM Rating
+                    WHERE item_id = {item_id}
+                    """
+
+        ret_val = None
+        error = None
+
+        db = Rating.get_db()
+        try:
+
+            cursor = db.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(get_avg_rating_sql)
+            ret_val = cursor.fetchone()
+            if ret_val is None:
+                error = "Average rating not found"
+
+            logging.debug("get_avg_rating {}".format(ret_val))
+        except:
+            error = "Unable to connect please try again later."
+
+        return ret_val, error
+
+
 

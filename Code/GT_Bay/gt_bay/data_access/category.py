@@ -24,6 +24,7 @@ class Category(BaseDAO):
             cursor.execute(select_sql)
 
             results = cursor.fetchall()
+
             for row in results:
                 category_choices.append((row[0], row[1]))
         except:

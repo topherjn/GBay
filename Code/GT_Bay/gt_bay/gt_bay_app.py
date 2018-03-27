@@ -189,9 +189,17 @@ def get_item():
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
     item_id = request.args.get('id')
-    form = ItemDescriptionForm()
+    form = ItemRatingForm()
     rating = Rating()
     ret_val, error = rating.get_rating(item_id)
+
+    if ret_val is not None:
+        form.item_id.data = item_id
+        form.average_rating = ret_val
+
+        
+    return render_template('item_rating.html',ui_data={},form=form,
+                           error=error)
 
 @app.route('/search_results')
 def search_results():
