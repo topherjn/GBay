@@ -1,4 +1,4 @@
-from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemDescriptionForm, ItemRatingForm
+from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemBiddingForm, ItemRatingForm
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from data_access.user import User
 from data_access.item import Item
@@ -14,6 +14,9 @@ logger.setLevel(logging.DEBUG)
 app = Flask(__name__)  # create the application instance :)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
 
+@app.context_processor
+def inject_now():
+    return {'now': datetime.utcnow()}
 
 # Retieve data from 'static' directory. Used most typically for rendering images.
 @app.route('/<path:path>')
@@ -70,7 +73,7 @@ def register():
         user, error = User.register_user(request.form['user_name'], request.form['password'],
                                          request.form['first_name'], request.form['last_name'])
         if user is not None:
-            session['user'] = user.to_json()
+            # session['user'] = user.to_json()
             return redirect(url_for('login'))
 
     logging.debug("OUT register method")
@@ -166,25 +169,71 @@ def search():
     return render_template('search.html', ui_data={}, form=form, error=error)
 
 
-@app.route('/get_item', methods=['GET'])
+@app.route('/get_item', methods=['GET', 'POST'])
 def get_item():
     item_id = request.args.get('id')
-    form = ItemDescriptionForm()
-    item = Item()
-    ret_val, error = item.get_item(item_id)
-    if ret_val is not None:
-        form.item_id.data = item_id
-        form.item_name.data = ret_val[0]
-        form.description.data = ret_val[1]
-        #form.category.data = ret_val['category_name']
-        #form.condition.data = ret_val['item_condition']
-        form.returns_accepted.data = ret_val[5]
-        form.now_sale_price.data = ret_val[4]
-        form.auction_end_dt.data = ret_val[6]
+    form = ItemBiddingForm()
+    placeBid_result = None
+    placeBid_error = None
 
+    if form.validate_on_submit():
+        logging.debug("\tgt_bay_app.get_item: form.validate_on_submit()")
+
+        placeBid_result, placeBid_error = Item.place_bid(
+           request.form['item_id'],
+           request.form['your_bid'],
+           session['user']['user_name']
+        )
+
+        if placeBid_error is not None:
+           flash("Database access failure: {}".format(placeBid_error))
+        elif placeBid_result < 1:
+           flash("Bid not placed: be outbid or auction ends")
+        else:
+           flash("Bid successfully placed at ${0:.2f}".format(float(request.form['your_bid'])))
+
+        return redirect(url_for('get_item', id=item_id))
+
+    logging.debug("\t\tgt_bay_app.get_item.valid: form.errors={}".format(form.errors))
+       
+    form.item_id.data = item_id
+
+    item, error = Item.get_item(item_id)
+    if item is None:
+        logging.debug("/get_item: item is None")
+        flash("Failed to get Item ID {item_id}: {error}".format(item_id=item_id, error=error))
+        return redirect(url_for('index'))
+    form.getnow_price.data = item[5]
+
+    bids, getBids_error = Item.get_bids(item_id)
+
+    min_bid, mb_error = Item.get_min_bid(item_id)
+    form.min_bid.data = min_bid[0]
+
+    return render_template('item_description.html', ui_data={}, form=form,
+                           item=item, bids=bids, getBids_error=getBids_error, mb_error=mb_error)
+
+
+@app.route('/get_now')
+def get_now():
+    item_id = request.args.get('id')
+    result = None
     error = None
-    return render_template('item_description.html', ui_data={},form=form,
-                           error=error)
+
+    result, error = Item.get_now(
+      item_id,
+      session['user']['user_name']
+    )
+
+    if error is not None:
+      flash("Database access failure: {}".format(error))
+    elif result < 1:
+      flash("Get It Now failed")
+    else:
+      flash("Item successfully purchased by Get It Now")
+
+    return redirect(url_for('get_item', id=item_id))
+
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():

@@ -27,16 +27,20 @@ class Item(BaseDAO):
         self._minimum_sale = minimum_sale
         self._auction_length = auction_length
         if auction_length is not None:
+            #todo / comment by Joy: if we keep _auction_start_date_time, should we change to
+            #now = auction_start_date_time + timedelta(days= int(auction_length))
             now = datetime.now() + timedelta(days= int(auction_length))
             self._auction_end_time = now.strftime('%Y-%m-%d %H:%M:%S')
         else:
             self._auction_end_time = None
         self._get_it_now = get_it_now
+        #todo / comment by Joy: do we need _auction_start_date_time?
         self._auction_start_date_time = auction_start_date_time
         self._listing_username = listing_username
 
 
-    def get_item(self, item_id):
+    @staticmethod
+    def get_item(item_id):
         ret_val = None
         error = None
 
@@ -46,9 +50,10 @@ class Item(BaseDAO):
           i.description,
           c.category_name,
           i.item_condition,
-          i.get_it_now_price,
           i.returnable,
-          i.auction_end_time
+          i.get_it_now_price,
+          i.auction_end_time,
+	  i.listing_username
         FROM Item i INNER JOIN Category c ON i.category_id = c.category_id
         WHERE i.item_id = {item_id};
         """.format(item_id=item_id)
@@ -59,13 +64,160 @@ class Item(BaseDAO):
             cursor.execute(get_item_sql)
             ret_val = cursor.fetchone()
             if ret_val is None:
-                error = "Item ID not found"
-
+                error = "Item ID {} not found".format(item_id)
             logging.debug("get_item {}".format(ret_val))
         except:
             error = "Unable to connect please try again later."
 
         return ret_val, error
+
+
+    @staticmethod
+    def get_bids(item_id):
+        ret_val = None
+        error = None
+
+        get_bids_sql = """
+        SELECT
+          b.bid_amount,
+          b.bid_time,
+          u.username
+        FROM Bid b INNER JOIN RegularUser u ON b.username = u.username
+        WHERE b.item_id = {item_id}
+        ORDER BY b.bid_time DESC
+        LIMIT 4;
+        """.format(item_id=item_id)
+
+        db = Item.get_db()
+        try:
+            logging.debug("before  cursor.execute(get_bids_sql)")
+            cursor = db.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(get_bids_sql)
+            logging.debug("after  cursor.execute(get_bids_sql)")
+            ret_val = cursor.fetchall()
+            logging.debug("ret_val {}".format(ret_val))
+        except:
+            error = "Unable to connect please try again later."
+            logging.debug("except {}".format(error))
+
+        db.close()
+
+        return ret_val, error
+
+
+    @staticmethod
+    def get_min_bid(item_id):
+        ret_val = None
+        error = None
+
+        get_min_sql = """
+        SELECT
+          IF(IFNULL(max(b.bid_amount),-1) >= i.starting_bid, 
+             max(b.bid_amount) + 1,
+             i.starting_bid) 
+          AS 'min_bid'
+        FROM Item i JOIN Bid b ON b.item_id = i.item_id
+        WHERE i.item_id = {item_id};
+        """.format(item_id=item_id)
+
+        db = Item.get_db()
+        try:
+            logging.debug("before  cursor.execute(get_min_sql)")
+            cursor = db.cursor()
+            cursor.execute(get_min_sql)
+            logging.debug("after  cursor.execute(get_min_sql)")
+            ret_val = cursor.fetchone()
+            logging.debug("ret_val {}".format(ret_val))
+            if ret_val is None:
+                error = "No minimum bid found"
+        except:
+            error = "Unable to connect please try again later."
+            logging.debug("except {}".format(error))
+
+        db.close()
+
+        return ret_val, error
+
+
+    @staticmethod
+    def place_bid(item_id, bid_amount, username):
+        ret_val = None
+        error = None
+
+        place_bid_sql = """
+        INSERT INTO Bid (username, item_id, bid_amount)
+        SELECT '{username}', {item_id}, {bid_amount}
+        WHERE (SELECT auction_end_time from Item where item_id = {item_id}) > CURRENT_TIMESTAMP
+          AND ((SELECT count(*) from Bid where item_id = {item_id}) = 0
+               OR (SELECT max(bid_amount) + 1 from Bid where item_id = {item_id}) <= {bid_amount});
+        """.format(username=username, item_id=item_id, bid_amount=bid_amount)
+
+        logging.debug("place_bid SQL: {}".format(place_bid_sql))
+
+        db = Item.get_db()
+        try:
+            cursor = db.cursor()
+            cursor.execute(place_bid_sql)
+            db.commit()
+            ret_val = cursor.rowcount
+        except:
+            db.rollback()
+            error = "Unable to place bid please try again later."
+
+        db.close()
+
+        logging.debug("{} {}".format(ret_val, error))
+        return ret_val, error
+
+
+    @staticmethod
+    def get_now(item_id, username):
+        ret_val = None
+        error = None
+
+        get_now_sql1 = """
+        SET @now = CURRENT_TIMESTAMP;
+        """
+
+        get_now_sql2 = """
+        UPDATE Item
+        SET auction_end_time = 
+        IF(auction_end_time > @now, 
+        @now, auction_end_time)
+        WHERE item_id = {item_id};
+        """.format(item_id=item_id)
+
+        get_now_sql3 = """
+        INSERT INTO Bid 
+        (username, item_id, bid_amount, bid_time)
+        SELECT 
+        '{username}', {item_id}, get_it_now_price, @now
+        FROM Item 
+        WHERE Item.item_id = {item_id} AND 
+              Item.auction_end_time = @now;
+        """.format(username=username, item_id=item_id)
+
+        logging.debug("get_now SQL 1: {}".format(get_now_sql1))
+        logging.debug("get_now SQL 2: {}".format(get_now_sql2))
+        logging.debug("get_now SQL 3: {}".format(get_now_sql3))
+
+        db = Item.get_db()
+        try:
+            cursor = db.cursor()
+            cursor.execute(get_now_sql1)
+            cursor.execute(get_now_sql2)
+            cursor.execute(get_now_sql3)
+            db.commit()
+            ret_val = cursor.rowcount
+        except:
+            db.rollback()
+            error = "Unable to purchase please try again later."
+
+        db.close()
+
+        logging.debug("{} {}".format(ret_val, error))
+        return ret_val, error
+
 
     def persist(self):
         logging.debug("persist item")
@@ -167,7 +319,6 @@ class Item(BaseDAO):
         db.close()
 
         return ret_val, error
-
 
 
 
