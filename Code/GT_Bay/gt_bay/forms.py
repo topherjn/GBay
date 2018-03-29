@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, TextAreaField, DecimalField, SubmitField, BooleanField, HiddenField, PasswordField
 from wtforms.validators import DataRequired, Regexp, Optional
 from data_access.category import Category
+from decimal import Decimal
 import re
 import logging
 
@@ -24,7 +25,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate(self):
-        logging.debug("In validate method")
+        logging.debug("RegisterForm: In validate method")
         if not FlaskForm.validate(self):
             return False
         result = True
@@ -62,6 +63,7 @@ class ListNewItemForm(FlaskForm):
         min_sale_price = self.str_to_currency(self.min_sale_price)
         now_sale_price = self.str_to_currency(self.now_sale_price, optional=True)
 
+        #todo / comment by Joy: append to each field's errors to give more specific error messages?
         if start_bid is None or min_sale_price is None:
             logging.debug("start_bid or min_sale_price is None")
             return False
@@ -82,6 +84,8 @@ class ListNewItemForm(FlaskForm):
 
         return result
 
+
+    #todo / comment by Joy: maybe allow more flexible input formats to have better user experience?
     def str_to_currency(self, field, optional=False):
         error = "Cannot convert input to US currency."
         amount = None
@@ -106,7 +110,7 @@ class ListNewItemForm(FlaskForm):
                 except ValueError:
                     field.errors.append(error)
             else:
-                logging.debug("yes we have and error")
+                logging.debug("yes we have an error")
                 field.errors.append(error)
         else:
             field.errors.append(error+" please be sure to include dollars and cents 100.00")
@@ -175,17 +179,40 @@ class SearchForm(FlaskForm):
         return result
 
 
-class ItemDescriptionForm(FlaskForm):
-    item_id = StringField('item_id')
-    item_name = StringField('item_name')
-    description = TextAreaField('description')
-    category = StringField('category')
-    condition = StringField('condition')
-    returns_accepted = BooleanField('returns_accepted')
-    now_sale_price = DecimalField('now_sale_price')
-    auction_end_dt = StringField('auction_end_dt')
+class ItemBiddingForm(FlaskForm):
+    item_id = HiddenField('item_id')
     your_bid = DecimalField('your_bid', validators=[DataRequired()])
-    min_bid = DecimalField('min_bid')
+    min_bid = HiddenField('min_bid')
+    getnow_price = HiddenField('getnow_price')
+    submit = SubmitField('Bid On This Item')
+
+    def validate(self):
+        logging.debug("\n\nItemBiddingForm: In validate method")
+        result = True
+
+        # your_bid field is required and is a number
+        if not FlaskForm.validate(self):  
+            result = False
+            self.your_bid.errors.append("Only number accepted (e.g. 100.00)")
+            return result
+
+        # your_bid has at most 2 decimal places
+        bid_amount = self.your_bid.data
+        if str(bid_amount).count('.') == 1 and len(str(bid_amount)[str(bid_amount).find('.'):]) > 3:
+            result = False
+            self.your_bid.errors.append("At most 2 decimal places accepted (e.g. 100.00)")
+
+	# check the value of your_bid
+        logging.debug("\n\tItemBiddingForm.validate: {} {} {} {}".
+                      format(self.item_id, self.your_bid, self.min_bid, self.getnow_price))
+        if bid_amount < Decimal(self.min_bid.data):
+            result = False
+            self.your_bid.errors.append("Your bid must be at least the minimum bid ${}".format(self.min_bid.data))
+        if self.getnow_price.data != '' and bid_amount >= Decimal(self.getnow_price.data):
+            result = False
+            self.your_bid.errors.append("Your bid exceeds the get it now price, please use the Get It Now purchase option")
+
+        return result
 
 
 class ItemRatingForm(FlaskForm):

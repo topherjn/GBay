@@ -2,33 +2,179 @@
 {% block body %}
     <div class="container">
     <div class="panel panel-primary">
-     <div class="panel-heading">
-            <h3 class="panel-title">Item Bid</h3>
-     </div>
-      <form class="form-signin" method="post" name="get_it_now">
-        {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
-      <div class="panel-body">
-        <a href="item_rating">View Ratings</a><br/>
-        <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
-        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", readonly="true", class="form-control", size=20) }}
-        <label for="description" >Description:</label> {{ form.description(id="description", readonly="true", class="form-control", size=20) }}
-        <label for="category" >Category:</label> {{ form.category(id="category", readonly="true", class="form-control") }}
-        <label for="condition" >Condition:</label> {{ form.condition(id="condition", readonly="true", class="form-control") }}
-        <label for="returns_accepted" >Returns Accepted?:</label> {{ form.returns_accepted(id="returns_accepted", readonly="true",  class="form-control") }}
-        <label for="now_sale_price" >Get it now price:</label> {{ form.now_sale_price(id="now_sale_price", readonly="true", class="form-control", size=20) }}
-
-        <label for="auction_end_dt" >Auction ends:</label> {{ form.auction_end_dt(id="auction_end_dt", readonly="true", class="form-control") }}
+      <div class="panel-heading">
+        <h3 class="panel-title">Item for Sale</h3>
       </div>
-      </form>
-      <form class="form-signin" method="post" name="place_bid">
-          <div class="panel-body">
-        <label for="your_bid" >Your bid:</label> {{ form.your_bid(id="your_bid", class="form-control", size=20) }}
-        <label for="min_bid" >Minimum bid:</label> {{ form.min_bid(id="min_bid", readonly="true", class="form-control", size=20) }}
-              <br/>
-        <button class="btn btn-lg btn-primary" type="submit">Bid on this Item</button>
-        <a href="index">Cancel</a>
+
+      <div class="panel-body">
+        <form class="form-horizontal" name="item_info">
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="item_id">Item ID</label>
+            <div class="col-sm-3">
+              <span class="form-control-static" id="item_id">{{ form.item_id.data }}</span>
+            </div>
+            <div class="col-sm-6" style="text-align:right;">
+              <a href="item_rating?id={{ form.item_id.data }}">View Ratings</a>
+            </div>
           </div>
-      </form>
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="item_name">Item Name</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="item_name">{{ item[0] }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="description">Description</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="description">{{ item[1] }}</span>
+	      {% if item[7] == session.user['user_name'] %}
+              <div style="text-align:right;">
+                <!–– todo: add link to edit_description ––>
+	        <a href="item_rating?id={{ form.item_id.data }}">Edit Description</a>
+	      </div>
+              {% endif %}
+            </div>
+    
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="category">Category</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="category">{{ item[2] }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="condition">Condition</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="condition">{{ item[3] }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="returnable">Returns Accepted?</label>
+            <div class="col-sm-9">
+	      <input type="checkbox" disabled id="returnable" {% if item[4] %}checked="checked"{% endif %}>	
+            </div>
+          </div>
+
+	  {% if item[5] %}
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="get_price">Get It Now Price</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="get_price">
+                ${{ item[5] }} 
+                <a {% if now < item[6] %}href="get_now?id={{ form.item_id.data }}"{% else %}href="#" disabled{% endif %}
+                 class="btn btn-primary" role="button">Get It Now!</a>
+              </span>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="form-group">
+            <label class="control-label col-sm-3" style="text-align:left;" for="auction_ends">Auction Ends:</label>
+            <div class="col-sm-9">
+              <span class="form-control-static" id="auction_ends">
+              {{ item[6] }}
+              {% if now >= item[6] %}
+	      <span style="color:red"><strong> (Ended!)</strong></span>
+              {% else %}
+	      <span style="color:green"><strong> (Active!)</strong></span>
+              {% endif %}
+              </span>
+            </div>
+          </div>
+
+        </form>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title" style="text-align:center;">Latest Bids</h4>
+      </div>
+
+      <div class="panel-body">
+        {% if getBids_error %}
+	  <p style="color:red"><strong>Database access error: {{ getBids_error }}</strong></p>
+        {% elif bids %}
+          <table class="table table-striped custab">
+            <thead>
+              <tr>
+                <th>Bid Amount</th>
+                <th>Time of Bid</th>
+                <th>Username</th>
+              </tr>
+            </thead>
+
+            {% for bid in bids %}
+              <tr>
+                <th>{{ bid['bid_amount'] }}</th>
+                <th>{{ bid['bid_time'] }}</th>
+                <th>{{ bid['username'] }}</th>
+              </tr>
+            {% endfor %}
+          </table>
+        {% else %}
+          <p style="text-align:center;"><strong>No bid yet!</strong></p>
+        {% endif %}
+      </div>
+    </div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes list-unstyled" style="color:navy; text-align:center;">
+              {% for message in messages %}
+                <li><strong>{{ message }}</strong></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        <br/>
+
+        {% if now >= item[6] %} 
+          <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
+        {% elif mb_error %}
+	  <p style="color:red"><strong>Minimum bid not known: {{ mb_error }}</strong></p>
+          <div style="float:right;">
+              <a href="index">Cancel</a>
+              <a href="get_item?id={{ form.item_id.data }}" class="btn btn-lg btn-primary" role="button">Refresh</a>
+          </div>
+        {% elif item[5] and form.min_bid.data >= item[5] %}
+          <p style="color:red; text-align:center;"><strong>Minimum bid exceeds Get It Now price!</strong></p>
+	  <div style="float:right;">
+            <a href="index">Cancel</a>
+            <a href="get_now?id={{ form.item_id.data }}" class="btn btn-primary" role="button">Get It Now!</a>
+          </div>
+        {% else %}
+          <form class="form-horizontal" method="post"">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              <label class="control-label col-sm-3" style="text-align:left;" for="your_bid">Your Bid</label>
+              <div class="col-sm-9 input-group">
+                <div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  {{ form.your_bid(id="your_bid", class="form-control", placeholder="{} (minimun bid)".format(form.min_bid.data)) }}
+                </div>
+                {% for error in form.your_bid.errors %}
+                  <span style="color: red;"> [{{ error }}]<br/> </span>
+                {% endfor %}
+              </div>
+            </div>
+
+            {{ form.item_id(value=form.item_id.data) }}
+            {{ form.min_bid(value=form.min_bid.data) }}
+            {{ form.getnow_price(value=form.getnow_price.data) }}
+
+	    <div style="float:right;">
+              <a href="index">Cancel</a>
+              {{ form.submit(class="btn btn-lg btn-primary") }}
+            </div>
+          </form>
+        {% endif %}   
+
+      </div>
     </div>
     </div>
 {% endblock %}
