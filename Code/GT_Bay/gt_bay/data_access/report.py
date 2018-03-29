@@ -8,7 +8,7 @@ logger = logging.getLogger()
 class Report(BaseDAO):
 
     def category_report(self):
-        category_report_sql =  """SELECT * FROM Category_Report;"""
+        category_report_sql =  """SELECT * FROM CategoryReport;"""
         ret_val = None
         error = None
 
