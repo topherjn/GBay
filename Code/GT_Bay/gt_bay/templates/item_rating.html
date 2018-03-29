@@ -7,7 +7,16 @@
      <div class="panel-heading">
             <h3 class="panel-title">Item Ratings</h3>
      </div>
-      <form class="form-signin" method="post" name="rate_item">
+     {% if rating_result %}
+     
+       {% for report_line in rating_result %}
+           
+       {% endfor %}
+
+     {% endif %}
+
+
+      <form class="form-signin" method="post" name="item_rating">
       <div class="panel-body">
         {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
         <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}

@@ -3,6 +3,7 @@ from flask import Flask, request, session, redirect, url_for, render_template, f
 from data_access.user import User
 from data_access.item import Item
 from data_access.report import Report
+from data_access.rating import Rating
 from datetime import datetime
 import logging
 
@@ -236,11 +237,18 @@ def get_now():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
+    item_id = request.args.get('id')
     form = ItemRatingForm()
-    error = None
-    return render_template('item_rating.html', ui_data={},form=form,
-                           error=error)
+    rating = Rating()
+    ret_val, error = rating.get_rating(item_id)
 
+    if ret_val is not None:
+        form.item_id.data = item_id
+        form.average_rating = ret_val
+
+        
+    return render_template('item_rating.html',ui_data={},form=form,
+                           error=error)
 
 @app.route('/search_results')
 def search_results():
@@ -261,6 +269,7 @@ def user_report():
     return render_template('user_report.html', ui_data={})
 
 # Load default config and override config from an environment variable
+app.debug = True
 app.config.update(dict(
     SECRET_KEY='development key',
     WTF_CSRF_ENABLED=True,
