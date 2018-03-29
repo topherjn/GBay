@@ -81,7 +81,7 @@ CREATE TABLE Bid(
    PRIMARY KEY (username, item_id, bid_time)
 ); 
 
-CREATE VIEW AS Category_Report
+CREATE VIEW Category_Report AS
 SELECT	  c.category_name     AS 'Category',
                 count(get_it_now_price) AS 'Total Items',
                 min(i.get_it_now_price) AS 'Min Price',
