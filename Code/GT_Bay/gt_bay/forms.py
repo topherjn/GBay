@@ -123,7 +123,7 @@ class SearchForm(FlaskForm):
 
     """
 
-    keyword = StringField('keyword', validators=[DataRequired("Keyword data is required")])
+    keyword = StringField('keyword', validators=[Optional()])
     category_choices, error = Category.get_categories()
     category_choices.insert(0,(0,' '))  # add blank, default "category"
     category = SelectField('category', coerce=int, choices=category_choices)
