@@ -67,7 +67,8 @@
             <div class="col-sm-9">
               <span class="form-control-static" id="get_price">
                 ${{ item[5] }} 
-                <a {% if now < item[6] %}href="get_now?id={{ form.item_id.data }}"{% else %}href="#" disabled{% endif %}
+                <a {% if now < item[6] and item[7] != session.user['user_name'] %}href="get_now?id={{ form.item_id.data }}"
+                   {% else %}href="#" disabled{% endif %}
                  class="btn btn-primary" role="button">Get It Now!</a>
               </span>
             </div>
@@ -133,7 +134,11 @@
         {% endwith %}
         <br/>
 
-        {% if now >= item[6] %} 
+
+        {% if item[7] == session.user['user_name'] %} 
+          <p style="color:green; text-align:center;"><strong>You listed this item.</strong></p>
+          <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
+        {% elif now >= item[6] %} 
           <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
         {% elif mb_error %}
 	  <p style="color:red"><strong>Minimum bid not known: {{ mb_error }}</strong></p>

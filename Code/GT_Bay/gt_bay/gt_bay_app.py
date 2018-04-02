@@ -245,18 +245,29 @@ def item_rating():
     if ret_val is not None:
         form.item_id.data = item_id
         form.average_rating = ret_val
-
         
     return render_template('item_rating.html',ui_data={},form=form,
                            error=error)
+
 
 @app.route('/search_results')
 def search_results():
     return render_template('search_results.html', ui_data={})
 
+
 @app.route('/auction_results')
 def auction_results():
-    return render_template('auction_results.html', ui_data={})
+    results = None
+    error = None
+
+    results, error = Report.auction_results()
+
+    if error is not None:
+      flash("Database access failure: {}".format(error))
+      return redirect(url_for('index'))
+
+    return render_template('auction_results.html', data=results, ui_data={})
+
 
 @app.route('/category_report')
 def category_report():
@@ -264,9 +275,11 @@ def category_report():
     cat_report, error = report.category_report()
     return render_template('category_report.html', cat_report=cat_report, error=error)
 
+
 @app.route('/user_report')
 def user_report():
     return render_template('user_report.html', ui_data={})
+
 
 # Load default config and override config from an environment variable
 app.debug = True
