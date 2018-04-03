@@ -14,22 +14,23 @@ logger.setLevel(logging.DEBUG)
 class Rating(BaseDAO):
 
     def get_rating(self, item_id):
+        logging.debug(item_id)
         get_rating_sql =  """
-            SELECT username AS ratingUsername, numstars, rating_time, comments
-            FROM Rating
-            WHERE item_id = {item_id}
-            ORDER BY rating_time DESC;
-            """
+            SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name
+            FROM Rating r INNER JOIN Item i ON i.item_id = r.item_id WHERE item_name = 
+            (SELECT item_name FROM Item WHERE item_id = {item_id})
+            """.format(item_id=item_id)
 
+        logging.debug(get_rating_sql)
         ret_val = None
         error = None
-
+        
         db = Rating.get_db()
         try:
 
             cursor = db.cursor(pymysql.cursors.DictCursor)
             cursor.execute(get_rating_sql)
-            ret_val = cursor.fetchone()
+            ret_val = cursor.fetchall()
             if ret_val is None:
                 error = "Rating not found"
 
@@ -37,7 +38,10 @@ class Rating(BaseDAO):
         except:
             error = "Unable to connect please try again later."
 
-        return ret_val, error
+        logging.debug(ret_val)
+
+
+        return None, None
 
     def get_average_rating(self, item_id):
         get_avg_rating_sql = """
