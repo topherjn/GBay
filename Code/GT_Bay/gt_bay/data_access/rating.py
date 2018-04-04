@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 
 
 class Rating(BaseDAO):
-    
+
     def __init__(self,username=None,item_id=None,numstars=None,comments=None):
 
         logging.debug("in rating constructor")
@@ -24,7 +24,7 @@ class Rating(BaseDAO):
     def get_rating(self, item_id):
         logging.debug(item_id)
         get_rating_sql =  """
-            SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name
+            SELECT r.username, r.numstars, r.rating_time, r.comments, r.rating_time, i.item_name
             FROM Rating r INNER JOIN Item i ON i.item_id = r.item_id WHERE item_name = 
             (SELECT item_name FROM Item WHERE item_id = {item_id})
             """.format(item_id=item_id)
