@@ -7,17 +7,24 @@
      <div class="panel-heading">
             <h3 class="panel-title">Item Ratings</h3>
      </div>
-      
+    {% set cur_user = session['user']['user_name'] %}
+    {% set item_name = rating_results[0]['item_name'] %}
+   
       <form class="form-signin" method="post" name="item_rating">
       <div class="panel-body">
         {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
-        <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
-        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", readonly="true", class="form-control", size=20) }}
-        <label for="average_rating" >Average Rating:</label>
+        <label for="item_id" >Item ID:</label>     {{ request.args.get('id') }}<br />
+        <label for="item_name" >Item Name:</label> {{ item_name }}<br />
+        <label for="average_rating" >Average Rating:</label> {{ average_rating['AVG(numstars)'] }}
         
            {% if rating_results %}
            <dl>
+              
             {% for rating in rating_results %}
+            {% if rating['username'] == cur_user %}
+            <!-- TODO actually delete -->
+              <a href="./item_rating?{item_id}">Delete My Rating</a>
+              {% endif %}<br />
             {% for i in range(1,6) %}
             {% if (i <= rating['numstars']) %}
             <img src="./images/star-on.svg" />

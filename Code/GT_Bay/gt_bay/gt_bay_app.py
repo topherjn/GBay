@@ -244,8 +244,13 @@ def item_rating():
 
     logging.debug("in controller")
     logging.debug(rating_results)
+
+    average_rating, error = rating.get_average_rating(item_id)    
+
+    logging.debug("in controller")
+    logging.debug(average_rating)
       
-    return render_template('item_rating.html', rating_results=rating_results,form=form,ui_data={}, error=error)
+    return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
 
 @app.route('/search_results')
 def search_results():
