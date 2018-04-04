@@ -239,16 +239,18 @@ def get_now():
 def item_rating():
     item_id = request.args.get('id')
     form = ItemRatingForm()
-    rating = Rating()
-    ret_val, error = rating.get_rating(item_id)
+    rating = Rating(item_id)
+    rating_results, error = rating.get_rating(item_id)    
 
-    if ret_val is not None:
-        form.item_id.data = item_id
-        form.average_rating = ret_val
-        
-    return render_template('item_rating.html',ui_data={},form=form,
-                           error=error)
+    logging.debug("in controller")
+    logging.debug(rating_results)
 
+    average_rating, error = rating.get_average_rating(item_id)    
+
+    logging.debug("in controller")
+    logging.debug(average_rating)
+      
+    return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
 
 @app.route('/search_results')
 def search_results():
