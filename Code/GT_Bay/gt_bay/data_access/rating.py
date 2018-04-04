@@ -12,6 +12,14 @@ logger.setLevel(logging.DEBUG)
 
 
 class Rating(BaseDAO):
+    
+    def __init__(self,username=None,item_id=None,numstars=None,comments=None):
+
+        logging.debug("in rating constructor")
+        self._username = username
+        self._item_name = item_id
+        self._numstars = numstars
+        self._comments = comments
 
     def get_rating(self, item_id):
         logging.debug(item_id)
@@ -41,14 +49,15 @@ class Rating(BaseDAO):
         logging.debug(ret_val)
 
 
-        return None, None
+        return ret_val, error
 
     def get_average_rating(self, item_id):
         get_avg_rating_sql = """
                     SELECT AVG(numstars)
                     FROM Rating
                     WHERE item_id = {item_id}
-                    """
+                    """.format(item_id=item_id)
+        logging.debug(get_avg_rating_sql)
 
         ret_val = None
         error = None
@@ -66,7 +75,35 @@ class Rating(BaseDAO):
         except:
             error = "Unable to connect please try again later."
 
+        logging.debug(ret_val)
+
+
         return ret_val, error
 
+    def persist(self):
+        logging.debug("persist rating")
+        ret_val = None
+        error = None
+
+        save_rating_sql = """
+        INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
+            self._username,
+            self._item_name,
+            self._numstars,
+            self._comments)
+        logging.debug(save_rating_sql)
+        db = self.get_db()
+        try:
+            cursor =db.cursor()
+            cursor.execute(save_rating_sql)
+            db.commit()
+            ret_val = cursor.lastrowid
+        except:
+            db.rollback()
+            error = "Unable to save rating.  Please try again later"
+        
+        db.close()
+
+        return ret_val, error
 
 

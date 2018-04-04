@@ -220,3 +220,6 @@ class ItemRatingForm(FlaskForm):
     item_name = StringField('item_name')
     average_rating = StringField('average_rating')
     comments = TextAreaField('comments')
+
+    logging.debug("in ItemRatingForm")
+    logging.debug(item_name)
