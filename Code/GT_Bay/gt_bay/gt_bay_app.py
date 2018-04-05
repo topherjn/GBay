@@ -271,7 +271,7 @@ def delete_rating():
 
     result = rating.delete_rating(username,item_id)
 
-    return redirect(url_for('get_item', id=item_id))
+    return redirect(url_for('item_rating', id=item_id))
 
 @app.route('/search_results')
 def search_results():
