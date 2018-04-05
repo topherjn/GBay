@@ -289,7 +289,7 @@ def auction_results():
       flash("Database access failure: {}".format(error))
       return redirect(url_for('index'))
 
-    return item_rating()
+    return render_template('auction_results.html', data=results, ui_data={})
 
 
 @app.route('/category_report')
