@@ -251,7 +251,8 @@ def item_rating():
         return redirect(url_for('get_item', id=item_id))
 
 
-    average_rating, error = rating.get_average_rating(item_id)    
+    average_rating, error = rating.get_average_rating(item_id)   
+    #-- TODO handle errors -- 
 
     logging.debug("in controller")
     logging.debug(average_rating)
@@ -270,7 +271,7 @@ def delete_rating():
 
     result = rating.delete_rating(username,item_id)
 
-    return render_template('item_rating.html',id=item_id)
+    return redirect(url_for('get_item', id=item_id))
 
 @app.route('/search_results')
 def search_results():
