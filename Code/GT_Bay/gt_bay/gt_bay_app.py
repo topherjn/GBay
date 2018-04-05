@@ -237,8 +237,12 @@ def get_now():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
-    item_id = request.args.get('id')
+   
+   
     form = ItemRatingForm()
+
+
+    item_id = request.args.get('id')
 
     rating = Rating(item_id)
     rating_results, error = rating.get_rating(item_id)    
@@ -261,7 +265,7 @@ def item_rating():
     logging.debug("in item rating after avg stars")
     logging.debug(average_rating)
       
-    return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
+    return render_template('item_rating.html', rating_results=rating_results, error=error,form=form)
 
 @app.route('/delete_rating', methods=['GET'])
 def delete_rating():
