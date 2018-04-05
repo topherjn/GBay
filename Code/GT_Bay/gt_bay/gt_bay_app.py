@@ -252,6 +252,20 @@ def item_rating():
       
     return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
 
+@app.route('/delete_rating', methods=['GET'])
+def delete_rating():
+    item_id = request.args.get('item_id')
+    username = request.args.get('username')
+
+    logging.debug("Item = {}".format(item_id))
+    logging.debug(username)
+
+    rating = Rating()
+
+    result = rating.delete_rating(username,item_id)
+
+    return render_template('item_rating.html',id=item_id)
+
 @app.route('/search_results')
 def search_results():
     return render_template('search_results.html', ui_data={})
@@ -268,7 +282,7 @@ def auction_results():
       flash("Database access failure: {}".format(error))
       return redirect(url_for('index'))
 
-    return render_template('auction_results.html', data=results, ui_data={})
+    return item_rating()
 
 
 @app.route('/category_report')

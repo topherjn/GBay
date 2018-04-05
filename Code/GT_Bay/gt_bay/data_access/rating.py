@@ -17,14 +17,14 @@ class Rating(BaseDAO):
 
         logging.debug("in rating constructor")
         self._username = username
-        self._item_id = item_id
+        self._item_id = item_id,
         self._numstars = numstars
         self._comments = comments
 
     def get_rating(self, item_id):
         logging.debug(item_id)
         get_rating_sql =  """
-            SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name
+            SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name, i.item_id
             FROM Rating r INNER JOIN Item i ON i.item_id = r.item_id WHERE item_name = 
             (SELECT item_name FROM Item WHERE item_id = {item_id}) ORDER BY r.rating_time DESC;
             """.format(item_id=item_id)
@@ -89,7 +89,7 @@ class Rating(BaseDAO):
         save_rating_sql = """
         INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
             self._username,
-            self._item_name,
+            self._item_id,
             self._numstars,
             self._comments)
         logging.debug(save_rating_sql)
@@ -106,5 +106,33 @@ class Rating(BaseDAO):
         db.close()
 
         return ret_val, error
+
+    def delete_rating(self,username,item_id):
+        delete_rating_sql = """
+        DELETE FROM Rating WHERE item_id = {item_id} AND username = '{username}'
+        """.format(item_id=item_id,username=username)
+
+        ret_val = None
+        error = None
+
+        logging.debug(delete_rating_sql)
+
+        db = self.get_db()
+        try:
+            cursor = db.cursor()
+            cursor.execute(delete_rating_sql)
+            db.commit()
+            ret_val = cursor.lastrowid
+        except:
+            db.rollback()
+            error = "Unable to delete rating."
+
+        db.close()
+
+        logging.debug("Delete Rating retval: ")
+        logging.debug(ret_val)
+
+        return ret_val, error
+
 
 
