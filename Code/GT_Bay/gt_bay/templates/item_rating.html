@@ -14,7 +14,7 @@
       <form class="form-signin" method="post" name="item_rating">
       <div class="panel-body">
         {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
-        <label for="item_id" >Item ID:</label>     {{ request.args.get('id') }}<br />
+        <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
         <label for="item_name" >Item Name:</label> {{ item_name }}<br />
         <label for="average_rating" >Average Rating:</label> {{ average_rating['AVG(numstars)'] }}
         
@@ -57,6 +57,7 @@
                 </span>
               </div>
           </div>
+        {{ form.item_id(id=item_id)}}
         <label for="comments" >Comments:</label> {{ form.comments(id="comments", class="form-control", size=20) }}
         <br/>
         <button class="btn btn-lg btn-primary" type="submit">Rate this item</button>

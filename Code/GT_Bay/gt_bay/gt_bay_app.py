@@ -239,6 +239,8 @@ def get_now():
 def item_rating():
     item_id = request.args.get('id')
     form = ItemRatingForm()
+    form.item_id.data = item_id
+
     rating = Rating(item_id)
     rating_results, error = rating.get_rating(item_id)    
 
@@ -254,7 +256,7 @@ def item_rating():
     average_rating, error = rating.get_average_rating(item_id)   
     #-- TODO handle errors -- 
 
-    logging.debug("in controller")
+    logging.debug("in item rating after avg stars")
     logging.debug(average_rating)
       
     return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
@@ -294,6 +296,7 @@ def auction_results():
 
 @app.route('/category_report')
 def category_report():
+    # TODO handles errors
     report = Report()
     cat_report, error = report.category_report()
     return render_template('category_report.html', cat_report=cat_report, error=error)

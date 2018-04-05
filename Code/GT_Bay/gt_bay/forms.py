@@ -216,10 +216,8 @@ class ItemBiddingForm(FlaskForm):
 
 
 class ItemRatingForm(FlaskForm):
-    item_id = StringField('item_id')
-    item_name = StringField('item_name')
-    average_rating = StringField('average_rating')
+    item_id = StringField('itemid')
+    username = HiddenField('username')
+    numstars = HiddenField('numstars')
     comments = TextAreaField('comments')
-
-    logging.debug("in ItemRatingForm")
-    logging.debug(item_name)
+    submit = SubmitField('AAdd Rating')
