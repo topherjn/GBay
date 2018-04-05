@@ -239,7 +239,6 @@ def get_now():
 def item_rating():
     item_id = request.args.get('id')
     form = ItemRatingForm()
-    form.item_id.data = item_id
 
     rating = Rating(item_id)
     rating_results, error = rating.get_rating(item_id)    
@@ -255,6 +254,9 @@ def item_rating():
 
     average_rating, error = rating.get_average_rating(item_id)   
     #-- TODO handle errors -- 
+    form.item_id.data = item_id
+    form.item_name.data = rating_results[0]['item_name']
+    form.average_rating.data = average_rating['AVG(numstars)']
 
     logging.debug("in item rating after avg stars")
     logging.debug(average_rating)
