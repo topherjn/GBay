@@ -39,8 +39,6 @@ class Rating(BaseDAO):
             cursor = db.cursor(pymysql.cursors.DictCursor)
             cursor.execute(get_rating_sql)
             ret_val = cursor.fetchall()
-            if ret_val is None:
-                error = "Rating not found"
 
             logging.debug("get_rating {}".format(ret_val))
         except:
@@ -133,6 +131,4 @@ class Rating(BaseDAO):
         logging.debug(ret_val)
 
         return ret_val, error
-
-
 

@@ -245,6 +245,12 @@ def item_rating():
     logging.debug("in controller")
     logging.debug(rating_results)
 
+    if not any(rating_results):
+        logging.debug("No ratings yet")
+        flash("No ratings yet")
+        return redirect(url_for('get_item', id=item_id))
+
+
     average_rating, error = rating.get_average_rating(item_id)    
 
     logging.debug("in controller")
