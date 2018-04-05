@@ -245,12 +245,33 @@ def item_rating():
     logging.debug("in controller")
     logging.debug(rating_results)
 
-    average_rating, error = rating.get_average_rating(item_id)    
+    if not any(rating_results):
+        logging.debug("No ratings yet")
+        flash("No ratings yet")
+        return redirect(url_for('get_item', id=item_id))
+
+
+    average_rating, error = rating.get_average_rating(item_id)   
+    #-- TODO handle errors -- 
 
     logging.debug("in controller")
     logging.debug(average_rating)
       
     return render_template('item_rating.html', rating_results=rating_results,average_rating=average_rating,form=form,ui_data={}, error=error)
+
+@app.route('/delete_rating', methods=['GET'])
+def delete_rating():
+    item_id = request.args.get('item_id')
+    username = request.args.get('username')
+
+    logging.debug("Item = {}".format(item_id))
+    logging.debug(username)
+
+    rating = Rating()
+
+    result = rating.delete_rating(username,item_id)
+
+    return redirect(url_for('get_item', id=item_id))
 
 @app.route('/search_results')
 def search_results():
