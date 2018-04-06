@@ -86,9 +86,9 @@ class Rating(BaseDAO):
         error = None
 
         check_already_exists = """
-            SELECT username, item_name
-            FROM UniqueRatings
-            WHERE username = '{}' AND item_name = '{}'  
+        SELECT r.username, i.item_name
+        FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id
+        WHERE r.username = '{}' AND i.item_name = '{}'
         """.format(self._username,self._item_name)
 
         logging.debug(check_already_exists)
