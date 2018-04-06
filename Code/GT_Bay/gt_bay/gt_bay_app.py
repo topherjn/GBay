@@ -91,7 +91,7 @@ def list_new_item():
 
         msg = "now_sale_price='{}' type={}".format(request.form['now_sale_price'],type(request.form['now_sale_price']))
         logging.debug("PASSED form.validate_on_submit ["+ msg+"]")
-        # todo need to run the business rules validations here before the INSERT
+        # TODO need to run the business rules validations here before the INSERT
         returnable = False
         logging.debug("returns_accepted=[{}]".format(str(request.form)))
         if 'returns_accepted' in request.form:
@@ -241,31 +241,69 @@ def item_rating():
    
     form = ItemRatingForm()
 
+    if request.method == 'GET':
+        item_id = request.args.get('id')
 
-    item_id = request.args.get('id')
+        rating = Rating(item_id)
+        rating_results, error = rating.get_rating(item_id)    
 
-    rating = Rating(item_id)
-    rating_results, error = rating.get_rating(item_id)    
+        logging.debug("in controller")
+        logging.debug(rating_results)
 
-    logging.debug("in controller")
-    logging.debug(rating_results)
-
-    if not any(rating_results):
-        logging.debug("No ratings yet")
-        flash("No ratings yet")
-        return redirect(url_for('get_item', id=item_id))
+        if not any(rating_results):
+            logging.debug("No ratings yet")
+            flash("No ratings yet")
+            return redirect(url_for('get_item', id=item_id))
 
 
-    average_rating, error = rating.get_average_rating(item_id)   
-    #-- TODO handle errors -- 
-    form.item_id.data = item_id
-    form.item_name.data = rating_results[0]['item_name']
-    form.average_rating.data = average_rating['AVG(numstars)']
+        average_rating, error = rating.get_average_rating(item_id)   
+        #-- TODO handle errors -- 
+        form.item_id.data = item_id
+        form.item_name.data = rating_results[0]['item_name']
+        form.average_rating.data = average_rating['AVG(numstars)']
 
-    logging.debug("in item rating after avg stars")
-    logging.debug(average_rating)
+        logging.debug("in item rating after avg stars")
+        logging.debug(average_rating)
       
+        
+    
+    if request.method == 'POST':
+        item_id = request.form.get('item_id')
+        username = session['user']['user_name']
+        # TODO get actual numstars from radio buttons
+        numstars = 3
+        comments = request.form.get('comments')
+
+        rating = Rating(username,item_id,numstars,comments)
+        result = rating.persist()
+
+        logging.debug("insert ")
+        logging.debug(item_id)
+        logging.debug(result)
+
+        rating = Rating(item_id)
+        rating_results, error = rating.get_rating(item_id)    
+
+        logging.debug("in controller")
+        logging.debug(rating_results)
+
+        if not any(rating_results):
+            logging.debug("No ratings yet")
+            flash("No ratings yet")
+            return redirect(url_for('get_item', id=item_id))
+
+
+        average_rating, error = rating.get_average_rating(item_id)   
+        #-- TODO handle errors -- 
+        form.item_id.data = item_id
+        form.item_name.data = rating_results[0]['item_name']
+        form.average_rating.data = average_rating['AVG(numstars)']
+
+        logging.debug("in item rating after avg stars")
+        logging.debug(average_rating)
+
     return render_template('item_rating.html', rating_results=rating_results, error=error,form=form)
+
 
 @app.route('/delete_rating', methods=['GET'])
 def delete_rating():
