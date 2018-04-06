@@ -245,11 +245,12 @@ def item_rating():
 
     if request.method == 'POST':
        item_id = request.form.get('item_id')
+       item_name = request.form.get('item_name')
        username = session['user']['user_name']
        numstars = request.form.get("rating1")
        comments = request.form.get("comments")
 
-       rating = Rating(username,item_id,numstars,comments)
+       rating = Rating(username,item_id,item_name,numstars,comments)
        result = rating.persist()
 
     if request.method == 'GET':

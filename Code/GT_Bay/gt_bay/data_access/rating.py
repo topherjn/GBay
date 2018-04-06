@@ -13,11 +13,12 @@ logger.setLevel(logging.DEBUG)
 
 class Rating(BaseDAO):
 
-    def __init__(self,username=None,item_id=None,numstars=None,comments=None):
+    def __init__(self,username=None,item_id=None,item_name=None,numstars=None,comments=None):
 
         logging.debug("in rating constructor")
         self._username = username
         self._itemid = item_id
+        self._item_name = item_name
         self._numstars = numstars
         self._comments = comments
 
@@ -84,26 +85,50 @@ class Rating(BaseDAO):
         ret_val = None
         error = None
 
-        save_rating_sql = """
-        INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
-            self._username,
-            self._itemid,
-            self._numstars,
-            self._comments)
+        check_already_exists = """
+        SELECT r.username, i.item_name
+        FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id
+        WHERE r.username = '{}' AND i.item_name = '{}'
+        """.format(self._username,self._item_name)
 
-        logging.debug(save_rating_sql)
+        logging.debug(check_already_exists)
 
-        db = self.get_db()
+        db = Rating.get_db()
         try:
-            cursor =db.cursor()
-            cursor.execute(save_rating_sql)
-            db.commit()
-            ret_val = cursor.lastrowid
+
+            cursor = db.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(check_already_exists)
+            ret_val = cursor.fetchall()
+            if ret_val is not None:
+                error = "You already rated this item."
+
         except:
-            db.rollback()
-            error = "Unable to save rating.  Please try again later"
-        
-        db.close()
+            error = "Unable to connect please try again later."
+
+        logging.debug("already exists?")
+        logging.debug(ret_val)
+
+        if len(ret_val) < 1:
+            save_rating_sql = """
+            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
+                self._username,
+                self._itemid,
+                self._numstars,
+                self._comments)
+
+            logging.debug(save_rating_sql)
+
+            db = self.get_db()
+            try:
+                cursor =db.cursor()
+                cursor.execute(save_rating_sql)
+                db.commit()
+                ret_val = cursor.lastrowid
+            except:
+                db.rollback()
+                error = "Unable to save rating.  Please try again later"
+            
+            db.close()
 
         return ret_val, error
 
