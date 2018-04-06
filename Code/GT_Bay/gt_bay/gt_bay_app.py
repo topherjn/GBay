@@ -268,10 +268,11 @@ def item_rating():
         
     
     if request.method == 'POST':
+        logging.debug(request.form)
         item_id = request.form.get('item_id')
         username = session['user']['user_name']
         # TODO get actual numstars from radio buttons
-        numstars = 3
+        numstars = request.form.get("rating1")
         comments = request.form.get('comments')
 
         rating = Rating(username,item_id,numstars,comments)
@@ -287,10 +288,14 @@ def item_rating():
         logging.debug("in controller")
         logging.debug(rating_results)
 
-        if not any(rating_results):
-            logging.debug("No ratings yet")
-            flash("No ratings yet")
-            return redirect(url_for('get_item', id=item_id))
+        if error is not None:
+            if not any(rating_results):
+                logging.debug("No ratings yet")
+                flash("No ratings yet")
+                return redirect(url_for('get_item', id=item_id))
+        else:
+            flash("You already rated this")
+           
 
 
         average_rating, error = rating.get_average_rating(item_id)   
