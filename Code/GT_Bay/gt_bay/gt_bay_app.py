@@ -250,7 +250,10 @@ def item_rating():
        result = rating.persist()
 
     if request.method == 'GET':
-        item_id = request.args.get('id')
+        item_id = request.args.get('item_id')
+        form.item_id.data = item_id
+        item_name = request.args.get('item_name')
+        form.item_name.data = item_name
 
    
     rating = Rating(item_id)
@@ -258,11 +261,7 @@ def item_rating():
     
     average_rating, error = rating.get_average_rating(item_id)   
 
-    form.item_id.data = item_id
-    form.item_name.data = rating_results[0]['item_name']
-    form.average_rating.data = average_rating['AVG(numstars)']
-
-    return render_template('item_rating.html', rating_results=rating_results, error=error,form=form)
+    return render_template('item_rating.html', rating_results=rating_results, average_rating=average_rating,error=error,form=form)
 
 
 @app.route('/delete_rating', methods=['GET'])
