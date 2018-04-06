@@ -237,78 +237,44 @@ def get_now():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
-   
+
+    rating_results = None
+    average_rating = None
    
     form = ItemRatingForm()
 
-    if request.method == 'GET':
-        item_id = request.args.get('id')
-
-        rating = Rating(item_id)
-        rating_results, error = rating.get_rating(item_id)    
-
-        logging.debug("in controller")
-        logging.debug(rating_results)
-
-        if not any(rating_results):
-            logging.debug("No ratings yet")
-            flash("No ratings yet")
-            return redirect(url_for('get_item', id=item_id))
-
-
-        average_rating, error = rating.get_average_rating(item_id)   
-        #-- TODO handle errors -- 
-        form.item_id.data = item_id
-        form.item_name.data = rating_results[0]['item_name']
-        form.average_rating.data = average_rating['AVG(numstars)']
-
-        logging.debug("in item rating after avg stars")
-        logging.debug(average_rating)
-      
-        
-    
     if request.method == 'POST':
-        item_id = request.form.get('item_id')
-        username = session['user']['user_name']
-        # TODO get actual numstars from radio buttons
-        numstars = 3
-        comments = request.form.get('comments')
+       item_id = request.form.get('item_id')
+       username = session['user']['user_name']
+       numstars = request.form.get("rating1")
+       comments = request.form.get("comments")
 
-        rating = Rating(username,item_id,numstars,comments)
-        result = rating.persist()
+       rating = Rating(username,item_id,numstars,comments)
+       result = rating.persist()
 
-        logging.debug("insert ")
-        logging.debug(item_id)
-        logging.debug(result)
-
-        rating = Rating(item_id)
-        rating_results, error = rating.get_rating(item_id)    
-
-        logging.debug("in controller")
-        logging.debug(rating_results)
-
-        if not any(rating_results):
-            logging.debug("No ratings yet")
-            flash("No ratings yet")
-            return redirect(url_for('get_item', id=item_id))
-
-
-        average_rating, error = rating.get_average_rating(item_id)   
-        #-- TODO handle errors -- 
+    if request.method == 'GET':
+        item_id = request.args.get('item_id')
         form.item_id.data = item_id
-        form.item_name.data = rating_results[0]['item_name']
+        item_name = request.args.get('item_name')
+        form.item_name.data = item_name
+
+   
+    rating = Rating(item_id)
+    rating_results, error = rating.get_rating(item_id)
+    
+    if rating_results is not None:
+        average_rating, error = rating.get_average_rating(item_id)  
         form.average_rating.data = average_rating['AVG(numstars)']
 
-        logging.debug("in item rating after avg stars")
-        logging.debug(average_rating)
-
-    return render_template('item_rating.html', rating_results=rating_results, error=error,form=form)
+    return render_template('item_rating.html', rating_results=rating_results, average_rating=average_rating,error=error,form=form)
 
 
 @app.route('/delete_rating', methods=['GET'])
 def delete_rating():
     item_id = request.args.get('item_id')
+    item_name = request.args.get('inm')
     username = request.args.get('username')
+    
 
     logging.debug("Item = {}".format(item_id))
     logging.debug(username)
@@ -317,7 +283,7 @@ def delete_rating():
 
     result = rating.delete_rating(username,item_id)
 
-    return redirect(url_for('item_rating', id=item_id))
+    return redirect(url_for('item_rating', item_id=item_id,item_name=item_name))
 
 @app.route('/search_results')
 def search_results():

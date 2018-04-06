@@ -1,6 +1,6 @@
 import flask
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, DecimalField, SubmitField, BooleanField, IntegerField, HiddenField, PasswordField
+from wtforms import StringField, SelectField, RadioField, TextAreaField, DecimalField, SubmitField, BooleanField, IntegerField, HiddenField, PasswordField
 from wtforms.validators import DataRequired, Regexp, Optional
 from data_access.category import Category
 from decimal import Decimal
@@ -220,8 +220,8 @@ class ItemRatingForm(FlaskForm):
     item_name = StringField('item_name')
     average_rating = StringField('average_rating')
     username = HiddenField('username')
-    numstars = HiddenField('numstars')
+    numstars =  HiddenField('numstars')
     comments = TextAreaField('comments')
     submit = SubmitField('Add Rating')
 
-    logging.debug(item_id)
+    
