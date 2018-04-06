@@ -17,7 +17,7 @@ class Rating(BaseDAO):
 
         logging.debug("in rating constructor")
         self._username = username
-        self._item_id = item_id,
+        self._itemid = item_id
         self._numstars = numstars
         self._comments = comments
 
@@ -42,7 +42,7 @@ class Rating(BaseDAO):
 
             logging.debug("get_rating {}".format(ret_val))
         except:
-            error = "Unable to connect please try again later."
+            error = "No ratings yet. Would you like to leave one?"
 
         logging.debug(ret_val)
 
@@ -87,10 +87,12 @@ class Rating(BaseDAO):
         save_rating_sql = """
         INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
             self._username,
-            self._item_id,
+            self._itemid,
             self._numstars,
             self._comments)
+
         logging.debug(save_rating_sql)
+
         db = self.get_db()
         try:
             cursor =db.cursor()
@@ -131,4 +133,3 @@ class Rating(BaseDAO):
         logging.debug(ret_val)
 
         return ret_val, error
-
