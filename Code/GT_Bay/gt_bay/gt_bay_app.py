@@ -237,6 +237,9 @@ def get_now():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
+
+    rating_results = None
+    average_rating = None
    
     form = ItemRatingForm()
 
@@ -259,7 +262,9 @@ def item_rating():
     rating = Rating(item_id)
     rating_results, error = rating.get_rating(item_id)
     
-    average_rating, error = rating.get_average_rating(item_id)   
+    if rating_results is not None:
+        average_rating, error = rating.get_average_rating(item_id)  
+        form.average_rating.data = average_rating['AVG(numstars)']
 
     return render_template('item_rating.html', rating_results=rating_results, average_rating=average_rating,error=error,form=form)
 
@@ -267,7 +272,9 @@ def item_rating():
 @app.route('/delete_rating', methods=['GET'])
 def delete_rating():
     item_id = request.args.get('item_id')
+    item_name = request.args.get('inm')
     username = request.args.get('username')
+    
 
     logging.debug("Item = {}".format(item_id))
     logging.debug(username)
@@ -276,7 +283,7 @@ def delete_rating():
 
     result = rating.delete_rating(username,item_id)
 
-    return redirect(url_for('item_rating', id=item_id))
+    return redirect(url_for('item_rating', item_id=item_id,item_name=item_name))
 
 @app.route('/search_results')
 def search_results():

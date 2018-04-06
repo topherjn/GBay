@@ -42,7 +42,7 @@ class Rating(BaseDAO):
 
             logging.debug("get_rating {}".format(ret_val))
         except:
-            error = "Unable to connect please try again later."
+            error = "No ratings yet. Would you like to leave one?"
 
         logging.debug(ret_val)
 
