@@ -7,29 +7,49 @@
      <div class="panel-heading">
             <h3 class="panel-title">Item Ratings</h3>
      </div>
-     {% if rating_result %}
-     
-       {% for report_line in rating_result %}
-           
-       {% endfor %}
-
-     {% endif %}
-
-
+    {% set cur_user = session['user']['user_name'] %}
+   
       <form class="form-signin" method="post" name="item_rating">
       <div class="panel-body">
         {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
         <label for="item_id" >Item ID:</label> {{ form.item_id(id="item_id", readonly="true", class="form-control", size=20) }}
         <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", readonly="true", class="form-control", size=20) }}
+        {% if rating_results %}
+        
         <label for="average_rating" >Average Rating:</label> {{ form.average_rating(id="average_rating", readonly="true", class="form-control", size=20) }}
 
+        
+
+           <dl>
+              
+            {% for rating in rating_results %}
+            {% if rating['username'] == cur_user %}
+              <!-- TODO actually delete -->
+              {% set delete_id = rating['item_id'] %}
+              <a href="./delete_rating?item_id={{delete_id}}&amp;username={{cur_user}}&amp;inm={{form.item_name.data}}">Delete My Rating</a>
+              {% endif %}<br />
+            {% for i in range(1,6) %}
+              {% if (i <= rating['numstars']) %} <img src="./images/star-on.svg" />
+              {% else %}                         <img src="./images/star-off.svg" />
+              {% endif %}
+            {% endfor %}
+            <span>
+              <dt>Rated by: </dt>
+              <dd>{{ rating['username'] }}</dd>
+              <dt>Date: </dt>
+              <dd>{{ rating['rating_time'].strftime('%Y-%m-%d') }}</dd>
+              <dt>Comment: </dt>
+              <dd>{{ rating['comments'] }}</dd>
+            </span>
+            {% endfor %}
+          </dl>
+            {% endif %}
           <div class="row">
                 <div class="col-xs-3">
                     My Rating
                 </div>
-
               <div class="col-xs-9">
-                <span class="star-rating">
+             <span class="star-rating">
                   <input type="radio" name="rating1" id="R11" value="1"><i></i>
                   <input type="radio" name="rating1" id="R12" value="2"><i></i>
                   <input type="radio" name="rating1" id="R13" value="3"><i></i>
@@ -38,11 +58,15 @@
                 </span>
               </div>
           </div>
-
         <label for="comments" >Comments:</label> {{ form.comments(id="comments", class="form-control", size=20) }}
         <br/>
+        
         <button class="btn btn-lg btn-primary" type="submit">Rate this item</button>
-        <a href="index">Cancel</a>
+        <a href="get_item?id={{ form.item_id.data }}">Cancel</a>
+      </div>
+
+     
+
       </div>
       </form>
     </div>

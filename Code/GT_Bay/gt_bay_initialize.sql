@@ -91,6 +91,10 @@ SELECT	  c.category_name     AS 'Category',
             GROUP BY c.category_id
             ORDER BY c.category_name;
 
+CREATE VIEW UniqueRatings AS
+SELECT r.username, i.item_name
+FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id;
+
 
 -- **********************************
 -- Insert category data

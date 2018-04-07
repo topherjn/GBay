@@ -93,7 +93,7 @@ def list_new_item():
 
         msg = "now_sale_price='{}' type={}".format(request.form['now_sale_price'],type(request.form['now_sale_price']))
         logging.debug("PASSED form.validate_on_submit ["+ msg+"]")
-        # todo need to run the business rules validations here before the INSERT
+        # TODO need to run the business rules validations here before the INSERT
         returnable = False
         logging.debug("returns_accepted=[{}]".format(str(request.form)))
         if 'returns_accepted' in request.form:
@@ -243,18 +243,54 @@ def get_now():
 
 @app.route('/item_rating', methods=['GET', 'POST'])
 def item_rating():
-    item_id = request.args.get('id')
+
+    rating_results = None
+    average_rating = None
+   
     form = ItemRatingForm()
-    rating = Rating()
-    ret_val, error = rating.get_rating(item_id)
 
-    if ret_val is not None:
+    if request.method == 'POST':
+       item_id = request.form.get('item_id')
+       item_name = request.form.get('item_name')
+       username = session['user']['user_name']
+       numstars = request.form.get("rating1")
+       comments = request.form.get("comments")
+
+       rating = Rating(username,item_id,item_name,numstars,comments)
+       result = rating.persist()
+
+    if request.method == 'GET':
+        item_id = request.args.get('item_id')
         form.item_id.data = item_id
-        form.average_rating = ret_val
+        item_name = request.args.get('item_name')
+        form.item_name.data = item_name
 
-        
-    return render_template('item_rating.html',ui_data={},form=form,
-                           error=error)
+   
+    rating = Rating(item_id)
+    rating_results, error = rating.get_rating(item_id)
+    
+    if rating_results is not None:
+        average_rating, error = rating.get_average_rating(item_id)  
+        form.average_rating.data = average_rating['AVG(numstars)']
+
+    return render_template('item_rating.html', rating_results=rating_results, average_rating=average_rating,error=error,form=form)
+
+
+@app.route('/delete_rating', methods=['GET'])
+def delete_rating():
+    item_id = request.args.get('item_id')
+    item_name = request.args.get('inm')
+    username = request.args.get('username')
+    
+
+    logging.debug("Item = {}".format(item_id))
+    logging.debug(username)
+
+    rating = Rating()
+
+    result = rating.delete_rating(username,item_id)
+
+    return redirect(url_for('item_rating', item_id=item_id,item_name=item_name))
 
 @app.route('/item_edit_desc', methods=['GET', 'POST'])
 def item_edit_desc():
@@ -287,19 +323,33 @@ def item_edit_desc():
 def search_results():
     return render_template('search_results.html', ui_data={})
 
+
 @app.route('/auction_results')
 def auction_results():
-    return render_template('auction_results.html', ui_data={})
+    results = None
+    error = None
+
+    results, error = Report.auction_results()
+
+    if error is not None:
+      flash("Database access failure: {}".format(error))
+      return redirect(url_for('index'))
+
+    return render_template('auction_results.html', data=results, ui_data={})
+
 
 @app.route('/category_report')
 def category_report():
+    # TODO handles errors
     report = Report()
     cat_report, error = report.category_report()
     return render_template('category_report.html', cat_report=cat_report, error=error)
 
+
 @app.route('/user_report')
 def user_report():
     return render_template('user_report.html', ui_data={})
+
 
 # Load default config and override config from an environment variable
 app.debug = True

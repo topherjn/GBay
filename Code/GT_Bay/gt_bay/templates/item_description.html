@@ -15,7 +15,8 @@
                             <span class="form-control-static" id="item_id">{{ form.item_id.data }}</span>
                         </div>
                         <div class="col-sm-6" style="text-align:right;">
-                            <a href="item_rating?id={{ form.item_id.data }}">View Ratings</a>
+                            <a href="item_rating?item_id={{ form.item_id.data }}&amp;item_name={{ item[0] }}">View
+                                Ratings</a>
                         </div>
                     </div>
 
@@ -69,8 +70,9 @@
                                 Price</label>
                             <div class="col-sm-9">
               <span class="form-control-static" id="get_price">
-                ${{ item[5] }} 
-                <a {% if now < item[6] %}href="get_now?id={{ form.item_id.data }}"{% else %}href="#" disabled{% endif %}
+                ${{ item[5] }}
+                <a {% if now < item[6] and item[7] != session.user['user_name'] %}href="get_now?id={{ form.item_id.data }}"
+                   {% else %}href="#" disabled{% endif %}
                    class="btn btn-primary" role="button">Get It Now!</a>
               </span>
                             </div>
@@ -137,7 +139,11 @@
                 {% endwith %}
                 <br/>
 
-                {% if now >= item[6] %}
+
+                {% if item[7] == session.user['user_name'] %}
+                    <p style="color:green; text-align:center;"><strong>You listed this item.</strong></p>
+                    <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
+                {% elif now >= item[6] %}
                     <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
                 {% elif mb_error %}
                     <p style="color:red"><strong>Minimum bid not known: {{ mb_error }}</strong></p>
@@ -167,18 +173,15 @@
                             {% endfor %}
                         </div>
                     </div>
-
                     {{ form.item_id(value=form.item_id.data) }}
                     {{ form.min_bid(value=form.min_bid.data) }}
                     {{ form.getnow_price(value=form.getnow_price.data) }}
-
                     <div style="float:right;">
                         <a href="index">Cancel</a>
                         {{ form.submit(class="btn btn-lg btn-primary") }}
                     </div>
                     </form>
                 {% endif %}
-
             </div>
         </div>
     </div>
