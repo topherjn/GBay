@@ -225,8 +225,8 @@ class Item(BaseDAO):
         error = None
 
         insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-                   "min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username) " \
-                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, '{}', {}, '{}')".format(
+                   "min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) " \
+                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, '{}', {})".format(
             self._item_name,
             self._description,
             self._item_condition,
@@ -234,7 +234,6 @@ class Item(BaseDAO):
             self._starting_bid,
             self._minimum_sale,
             self._get_it_now,
-            self._auction_length,
             self._auction_end_time,
             self._category_id,
             self._listing_username)
