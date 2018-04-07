@@ -292,7 +292,7 @@ class Item(BaseDAO):
                        <= {maxPrice})
                   AND ({conditionAtLeast} IS NULL OR
                        item_condition >= {conditionAtLeast})
-            ORDER BY auction_end_time
+            ORDER BY auction_end_time;
         """.format(key_word=key_word, category=category, minPrice=minPrice,
                    maxPrice=maxPrice, conditionAtLeast=conditionAtLeast)
 
@@ -320,5 +320,27 @@ class Item(BaseDAO):
 
         return ret_val, error
 
+    @staticmethod
+    def updateDesc(item_id, desc):
+        logging.debug("persist item")
+        ret_val = None
+        error = None
 
+        updateDesc_sql = """UPDATE Item
+                            SET description = '{desc}'
+                            WHERE item_id = {item_id};""".format(desc=desc, item_id=item_id)
 
+        logging.debug(updateDesc_sql)
+        db = Item.get_db()
+        try:
+            cursor = db.cursor()
+            cursor.execute(updateDesc_sql)
+            db.commit()
+            ret_val = cursor.lastrowid
+        except:
+            db.rollback()
+            error = "Unable to update item description please try again later."
+
+        db.close()
+
+        return ret_val, error

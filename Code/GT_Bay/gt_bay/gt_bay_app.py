@@ -1,4 +1,5 @@
-from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemBiddingForm, ItemRatingForm
+from forms import LoginForm, RegisterForm, ListNewItemForm, SearchForm, ItemBiddingForm, ItemRatingForm, \
+    itemEditDescForm
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from data_access.user import User
 from data_access.item import Item
@@ -13,6 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 app = Flask(__name__)  # create the application instance :)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
+#app.debug = True
 
 @app.context_processor
 def inject_now():
@@ -203,6 +205,10 @@ def get_item():
         logging.debug("/get_item: item is None")
         flash("Failed to get Item ID {item_id}: {error}".format(item_id=item_id, error=error))
         return redirect(url_for('index'))
+
+    form.item_name.data = item[0]
+    form.desc.data = item[1]
+
     form.getnow_price.data = item[5]
 
     bids, getBids_error = Item.get_bids(item_id)
@@ -249,6 +255,33 @@ def item_rating():
         
     return render_template('item_rating.html',ui_data={},form=form,
                            error=error)
+
+@app.route('/item_edit_desc', methods=['GET', 'POST'])
+def item_edit_desc():
+    item_id = request.args.get('id')
+    item_name = request.args.get('name')
+    desc = request.args.get('desc')
+    form = itemEditDescForm()
+    form.item_id.data = item_id
+    form.item_name.data = item_name
+    form.description.data = desc
+
+    error = None
+    logger.debug("\tgt_bay_app.item_edit_desc: form.description.data = {}".format(form.description.data))
+    if form.validate_on_submit():
+        logging.debug("\tgt_bay_app.item_edit_desc: form.validate_on_submit()")
+        desc = request.form['description']
+        logging.debug("\t\tgt_bay_app.item_edit_desc: form.validate_on_submit() - desc = {}".format(desc))
+        retval, error = Item.updateDesc(item_id=item_id, desc=desc)
+        logging.debug("\t\tgt_bay_app.item_edit_desc: form.validate_on_submit() - error = {}".format(error))
+
+        if error is None:
+            return redirect(url_for('get_item', id=item_id))
+    else:
+        logging.debug("\t\tgt_bay_app.py - item_edit_desc.form.validate_on_submit(): ELSE")
+
+    return render_template('item_edit_desc.html', ui_data={}, form=form, error=error)
+    #return redirect(url_for('item_edit_desc.html', id=item_id, name=item_name, desc=desc))
 
 @app.route('/search_results')
 def search_results():

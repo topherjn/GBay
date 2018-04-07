@@ -50,7 +50,7 @@ CREATE TABLE Item(
    min_sale_price DECIMAL(10,2) NOT NULL CHECK(min_sale_price >= starting_bid),
    auction_length INT NOT NULL CHECK(auction_length = 1 or auction_length = 3 or auction_length = 5 or auction_length = 7),
    get_it_now_price DECIMAL(10,2) NULL CHECK(get_it_now_price >= min_sale_price),
-   auction_end_time TIMESTAMP NOT NULL CHECK(TIMESTAMP > CURRENT_TIMESTAMP),
+   auction_end_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
    category_id INT NOT NULL,
    listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
