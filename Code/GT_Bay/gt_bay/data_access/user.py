@@ -1,5 +1,5 @@
 import logging
-
+from data_access.sql_statements import SQLStatements
 from pymysql import IntegrityError
 
 from data_access.base_data_access_object import BaseDAO
@@ -46,9 +46,7 @@ class User(BaseDAO):
         error = None
         logging.debug("login user_name={}, password={}".format(user_name, password))
 
-        select_gt_bay_user = "SELECT RegularUser.username, AdminUser.position " \
-                        "FROM RegularUser LEFT JOIN AdminUser ON RegularUser.username = AdminUser.username " \
-                        "WHERE RegularUser.username = '{}' AND RegularUser.password = '{}'".format(user_name, password)
+        select_gt_bay_user = SQLStatements.select_gt_bay_user.format(user_name, password)
 
         db = User.get_db()
         try:
@@ -72,8 +70,7 @@ class User(BaseDAO):
         error = None
         logging.debug("register_user user_name={}, password={}".format(user_name, password))
 
-        insert_regular_user="INSERT INTO RegularUser(username, password, first_name, last_name) " \
-                   "VALUES ('{}', '{}', '{}', '{}')".format(user_name, password, first_name, last_name)
+        insert_regular_user=SQLStatements.insert_regular_user.format(user_name, password, first_name, last_name)
 
         db = User.get_db()
         try:

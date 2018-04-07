@@ -422,4 +422,11 @@ SELECT
                        <= NULL )
                   AND (0 IS NULL OR
                        item_condition >= 0)
-            ORDER BY auction_end_time
+            ORDER BY auction_end_time;
+
+
+INSERT INTO Bid (username, item_id, bid_amount)
+        SELECT 'user02', 9, 10.00
+        WHERE (SELECT auction_end_time from Item where item_id = 9) > CURRENT_TIMESTAMP
+          AND ((SELECT count(*) from Bid where item_id = 9) = 0
+               OR (SELECT max(bid_amount) + 1 from Bid where item_id = 9) <= 10.00);
