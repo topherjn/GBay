@@ -13,7 +13,8 @@ DROP TABLE IF EXISTS Item;
 DROP TABLE IF EXISTS AdminUser;
 DROP TABLE IF EXISTS RegularUser;
 DROP TABLE IF EXISTS Category;
-DROP VIEW IF EXISTS Category_Report;
+DROP VIEW IF EXISTS CategoryReport;
+DROP VIEW IF EXISTS UniqueRatings;
 
 
 -- Create the tables
