@@ -1,9 +1,9 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
 -- Sample data
-
-CREATE DATABASE cs6400_spr18_team047_sample_data;
-USE cs6400_spr18_team047_sample_data;
+DROP DATABASE cs6400_spr18_team047;
+CREATE DATABASE cs6400_spr18_team047;
+USE cs6400_spr18_team047;
 
 
 -- Start fresh delete existing tables
@@ -64,7 +64,7 @@ CREATE TABLE Rating(
    item_id INT NOT NULL,
    numstars INT unsigned NOT NULL CHECK(nbr_stars < 6),
    comments TEXT NULL,
-   rating_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   rating_time datetime NOT NULL,
    FOREIGN KEY (username) REFERENCES RegularUser(username),
    FOREIGN KEY (item_id) REFERENCES Item(item_id),
    PRIMARY KEY (username, item_id)
@@ -122,20 +122,13 @@ INSERT INTO AdminUser(username, position) VALUES ('admin2', 'Chief Techy');
 
 
 
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00,'2018-03-31 12:22', 3, 'user1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Canon Powershot', 'Point and shoot!', 2, false, 40.00, 60.00, 80.00,'2018-04-01 14:14:00', 3, 'user1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Nikon D3', 'New and in box!', 4, false, 1500.00, 1800.00, 2000.00,'2018-04-05 09:19:00', 3, 'user2');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00,'2018-04-05 15:33:00', 1, 'user3');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00,'2018-04-05 16:48:00', 2, 'admin1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 8.00,'2018-04-08 10:01:00', 2, 'admin2');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00,'2018-04-09 22:09:00', 5, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Canon Powershot', 'Point and shoot!', 2, false, 40.00, 60.00, 80.00,DATE_ADD(NOW(), INTERVAL 7 DAY), 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Nikon D3', 'New and in box!', 4, false, 1500.00, 1800.00, 2000.00, '2018-04-04', 3, 'user2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user3');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00, DATE_ADD(NOW(), INTERVAL 5 DAY), 2, 'admin1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 8.00,'2018-04-01', 2, 'admin2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 5, 'user6');
 
 
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
