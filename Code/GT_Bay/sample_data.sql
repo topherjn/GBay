@@ -2,8 +2,8 @@
 -- DDL for cs6400_spr18_team047 DB
 -- Sample data
 
-CREATE DATABASE cs6400_spr18_team047;
-USE cs6400_spr18_team047;
+CREATE DATABASE cs6400_spr18_team047_sample_data;
+USE cs6400_spr18_team047_sample_data;
 
 
 -- Start fresh delete existing tables
@@ -50,7 +50,7 @@ CREATE TABLE Item(
    starting_bid DECIMAL(10,2) NOT NULL,
    min_sale_price DECIMAL(10,2) NOT NULL CHECK(min_sale_price >= starting_bid),
    get_it_now_price DECIMAL(10,2) NULL CHECK(get_it_now_price >= min_sale_price),
-   auction_end_time DATETIME NOT NULL,
+   auction_end_time TIMESTAMP NOT NULL CHECK(TIMESTAMP > CURRENT_TIMESTAMP),
    category_id INT NOT NULL,
    listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
