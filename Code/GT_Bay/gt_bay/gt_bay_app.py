@@ -348,7 +348,9 @@ def category_report():
 
 @app.route('/user_report')
 def user_report():
-    return render_template('user_report.html', ui_data={})
+    report = Report()
+    user_report, error = report.user_report()
+    return render_template('user_report.html', user_report=user_report, error=error)
 
 
 # Load default config and override config from an environment variable
