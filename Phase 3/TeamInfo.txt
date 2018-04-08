@@ -1,0 +1,2 @@
+For grading convenience, we have aggregated all of the app's SQL in the following file:
+6400Spring18Team047/Code/GT_Bay/gt_bay/data_access/sql_statements.py
