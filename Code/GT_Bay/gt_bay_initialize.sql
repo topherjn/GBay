@@ -1,7 +1,8 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
+-- Sample data
 
--- CREATE DATABASE cs6400_spr18_team047;
+CREATE DATABASE cs6400_spr18_team047;
 USE cs6400_spr18_team047;
 
 
@@ -48,9 +49,8 @@ CREATE TABLE Item(
    returnable BOOLEAN NOT NULL DEFAULT false,
    starting_bid DECIMAL(10,2) NOT NULL,
    min_sale_price DECIMAL(10,2) NOT NULL CHECK(min_sale_price >= starting_bid),
-   auction_length INT NOT NULL CHECK(auction_length = 1 or auction_length = 3 or auction_length = 5 or auction_length = 7),
    get_it_now_price DECIMAL(10,2) NULL CHECK(get_it_now_price >= min_sale_price),
-   auction_end_time TIMESTAMP NOT NULL CHECK(TIMESTAMP > CURRENT_TIMESTAMP),
+   auction_end_time DATETIME NOT NULL,
    category_id INT NOT NULL,
    listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
@@ -101,53 +101,63 @@ FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id;
 INSERT INTO Category(category_id, category_name) VALUES (1, 'Art');
 INSERT INTO Category(category_id, category_name) VALUES (2, 'Books');
 INSERT INTO Category(category_id, category_name) VALUES (3, 'Electronics');
-INSERT INTO Category(category_id, category_name) VALUES (4, 'Home and Garden');
-INSERT INTO Category(category_id, category_name) VALUES (5, 'Sports Goods');
+INSERT INTO Category(category_id, category_name) VALUES (4, 'Home & Garden');
+INSERT INTO Category(category_id, category_name) VALUES (5, 'Sporting Goods');
 INSERT INTO Category(category_id, category_name) VALUES (6, 'Toys');
 INSERT INTO Category(category_id, category_name) VALUES (7, 'Other');
 
--- Add an admin user
-INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin01', 'password', 'Pierre', 'Omidyar');
-INSERT INTO AdminUser(username, position) VALUES ('admin01', 'DBA');
-
 -- Add regular User
-INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user01', 'password', 'Dan', 'Smith');
-INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user02', 'password', 'Amy', 'Smith');
-INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user03', 'password', 'Anne', 'Smith');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user1', 'pass1', 'Dante', 'Kelor');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user2', 'pass2', 'Dodra', 'Kiney');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user3', 'pass3', 'Peran', 'Bishop');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user4', 'pass4', 'Randy', 'Rorann');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user5', 'pass5', 'Ashod', 'Iankel');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user6', 'pass6', 'Cany', 'Achant');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin1', 'opensesame', 'Riley', 'Fuiss');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin2', 'opensesayou', 'Tonnis', 'Kinser');
 
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('clock radio', 'digital clock radio', 5, false, 15.00, 20.00, 30.00, 5, '2018-03-28 09:01:52', 3, 'user02');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('moby dick', 'classic book', 5, false, 10.00, 15.00, 20.00, 3, '2018-03-026 09:01:52', 2, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('ipod classic', 'like new ipod', 4, false, 15.00, 20.00, 30.00, 5, '2018-03-28 09:01:52', 3, 'user02');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('fishing boat', '12 foot fishing boat', 3, false, 150.00, 200.00, 300.00, 5, '2018-03-28 09:01:52', 5, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('clock radio', 'digital clock radio', 4, false, 16.00, 21.00, 31.00, 5, '2018-03-28 09:01:52', 3, 'user03');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username)
-   VALUES ('surfboard', 'retro board', 4, false, 160.00, 210.00, NULL, 5, '2018-03-28 09:01:52', 3, 'user03');
+-- Add an admin user
+INSERT INTO AdminUser(username, position) VALUES ('admin1', 'Technical Support');
+INSERT INTO AdminUser(username, position) VALUES ('admin2', 'Chief Techy');
 
 
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user02', 1, 5, 'great product');
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 1, 3, 'its ok alarm to quiet');
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user03', 2, 3, 'to long');
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user01', 2, 5, 'great book');
 
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 15.00, '2018-03-26 09:01:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 1, 16.00, '2018-03-26 09:02:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 17.00, '2018-03-26 09:03:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 1, 18.00, '2018-03-26 09:04:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 1, 20.00, '2018-03-26 09:05:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 2, 19.00, '2018-03-26 09:06:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user02', 3, 18.00, '2018-03-26 09:07:52');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user03', 3, 21.00, '2018-03-26 09:08:52');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00,'2018-03-31 12:22', 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Canon Powershot', 'Point and shoot!', 2, false, 40.00, 60.00, 80.00,'2018-04-01 14:14:00', 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Nikon D3', 'New and in box!', 4, false, 1500.00, 1800.00, 2000.00,'2018-04-05 09:19:00', 3, 'user2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00,'2018-04-05 15:33:00', 1, 'user3');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00,'2018-04-05 16:48:00', 2, 'admin1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 8.00,'2018-04-08 10:01:00', 2, 'admin2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00,'2018-04-09 22:09:00', 5, 'user6');
 
-INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user03', 3, 4, 'A favorite of mine.', '2018-03-26 09:08:52');
-INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user02', 3, 2, 'Not so great', '2018-03-24 09:08:52');
-INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user02', 2, 5, 'Great book fair price', '2018-03-24 09:08:52');
-INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user01', 4, 5, 'Nice boat', '2018-03-24 09:08:52');
-INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user01', 1, 5, 'Nice product', '2018-03-24 09:08:52');
+
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3', 1, 2, 'Not so great GPS!');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user4', 1, 4, 'A favorite of mine.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user1', 4, 1, 'Go for the italian stuff instead.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('admin1', 6, 1, 'Not recommended.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user1', 6, 3, 'This book is okay.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 6, 5, 'I learned SQL in 8 minutes!');
+
+
+
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 1, 50.00, '2018-03-30 14:53');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 1, 55.00, '2018-03-30 16:45');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 1, 75.00, '2018-03-30 16:45');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 1, 85.00, '2018-03-31 10:45');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 2, 80.00, '2018-04-01 13:55');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 1500.00, '2018-04-04 08:37');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 3, 1501.00, '2018-04-04 09:25');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 1795.00, '2018-04-04 12:27');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
 
 
 
