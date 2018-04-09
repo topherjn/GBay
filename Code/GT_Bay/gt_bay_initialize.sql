@@ -14,7 +14,6 @@ DROP TABLE IF EXISTS AdminUser;
 DROP TABLE IF EXISTS RegularUser;
 DROP TABLE IF EXISTS Category;
 DROP VIEW IF EXISTS CategoryReport;
-DROP VIEW IF EXISTS UniqueRatings;
 
 
 -- Create the tables
@@ -91,10 +90,6 @@ SELECT	  c.category_name     AS 'Category',
             FROM Category c LEFT OUTER JOIN Item i ON c.category_id = i.category_id
             GROUP BY c.category_id
             ORDER BY c.category_name;
-
-CREATE VIEW UniqueRatings AS
-SELECT r.username, i.item_name
-FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id;
 
 
 -- **********************************
