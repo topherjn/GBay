@@ -1,2 +1,5 @@
 For grading convenience, we have aggregated all of the app's SQL in the following file:
 6400Spring18Team047/Code/GT_Bay/gt_bay/data_access/sql_statements.py
+
+*Please note that the SQL in the file above relies on views created in the database initialization file:
+6400Spring18Team047/Code/GT_Bay/gt_bay_initialize.sql
