@@ -146,7 +146,7 @@ class Item(BaseDAO):
 
         place_bid_sql = """
         INSERT INTO Bid (username, item_id, bid_amount)
-        SELECT username, item_id, bid_amount
+        SELECT '{username}', {item_id}, {bid_amount}
         WHERE (SELECT auction_end_time from Item where item_id = {item_id}) > CURRENT_TIMESTAMP
           AND ((SELECT count(*) from Bid where item_id = {item_id}) = 0
                OR (SELECT max(bid_amount) + 1 from Bid where item_id = {item_id}) <= {bid_amount});
