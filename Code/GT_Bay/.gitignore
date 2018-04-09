@@ -18,3 +18,5 @@ __pycache__/
 logfile.log
 gt_bay.tar
 *.pid
+nohup.out
+*.swp
