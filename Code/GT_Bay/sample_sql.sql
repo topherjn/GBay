@@ -1,7 +1,7 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
 -- Sample data
-
+DROP DATABASE cs6400_spr18_team047;
 CREATE DATABASE cs6400_spr18_team047;
 USE cs6400_spr18_team047;
 
@@ -13,14 +13,7 @@ DROP TABLE IF EXISTS Item;
 DROP TABLE IF EXISTS AdminUser;
 DROP TABLE IF EXISTS RegularUser;
 DROP TABLE IF EXISTS Category;
-DROP VIEW IF EXISTS CategoryReport;
-DROP VIEW IF EXISTS UserReport_Listed;
-DROP VIEW IF EXISTS UserReport_Sold;
-DROP VIEW IF EXISTS UserReport_Purchased;
-DROP VIEW IF EXISTS UserReport_Rated;
-DROP VIEW IF EXISTS UserReport_LS;
-DROP VIEW IF EXISTS UserReport_LSP;
-DROP VIEW IF EXISTS UserReport;
+DROP VIEW IF EXISTS Category_Report;
 
 
 -- Create the tables
@@ -57,7 +50,7 @@ CREATE TABLE Item(
    starting_bid DECIMAL(10,2) NOT NULL,
    min_sale_price DECIMAL(10,2) NOT NULL CHECK(min_sale_price >= starting_bid),
    get_it_now_price DECIMAL(10,2) NULL CHECK(get_it_now_price >= min_sale_price),
-   auction_end_time DATETIME NOT NULL,
+   auction_end_time TIMESTAMP NOT NULL CHECK(TIMESTAMP > CURRENT_TIMESTAMP),
    category_id INT NOT NULL,
    listing_username VARCHAR(50) NOT NULL,
    FOREIGN KEY (category_id) REFERENCES Category(category_id),
@@ -98,143 +91,9 @@ SELECT	  c.category_name     AS 'Category',
             GROUP BY c.category_id
             ORDER BY c.category_name;
 
-CREATE VIEW UserReport_Listed AS
-Select *
-FROM
-	(
-		SELECT listing_username AS username, COUNT(listing_username) AS num_listed
-		FROM Item
-		GROUP BY listing_username
-	) AS ListedT
-;
-
-
-
-
-CREATE VIEW UserReport_Sold AS
-Select *
-FROM
-	(
-		SELECT listing_username AS username, COUNT(*) AS num_sold
-		FROM Bid b1 
-		  NATURAL JOIN (
-			SELECT item_id, max(bid_amount) AS bid_amount 
-			FROM Bid GROUP BY item_id) AS b2 
-				NATURAL JOIN Item i
-				WHERE auction_end_time < NOW() AND bid_amount >= min_sale_price
-		GROUP BY listing_username
-	) AS SoldT
-;
-
-
-CREATE VIEW UserReport_Purchased AS
-Select *
-FROM
-	(
-		SELECT username AS username, COUNT(*) AS num_purchased
-		FROM Bid b1 
-		NATURAL JOIN (
-			SELECT item_id, max(bid_amount) AS bid_amount 
-			FROM Bid GROUP BY item_id) AS b2 
-			NATURAL JOIN Item i
-			WHERE auction_end_time < NOW() AND bid_amount >= min_sale_price
-		GROUP BY username
-	) AS PurchasedT
-;
-
-
-CREATE VIEW UserReport_Rated AS
-Select *
-FROM
-	(
-		SELECT username AS username, COUNT(username) AS num_rated
-		FROM Rating 
-		GROUP BY username
-	) AS RatedT
-;
-
-
-CREATE VIEW UserReport_LS AS
-Select *
-FROM
-	(
-		#SELECT UserReport_Listed.username, num_listed, num_sold
-        SELECT IFNULL(UserReport_Listed.username, UserReport_Sold.username) AS username, num_listed, num_sold
-		FROM
-			(
-				UserReport_Listed LEFT JOIN UserReport_Sold
-				ON UserReport_Listed.username = UserReport_Sold.username
-			)
-
-		UNION
-
-		#SELECT UserReport_Listed.username, num_listed, num_sold
-        SELECT IFNULL(UserReport_Listed.username, UserReport_Sold.username) AS username, num_listed, num_sold
-		FROM
-			(
-				UserReport_Listed RIGHT JOIN UserReport_Sold
-				ON UserReport_Listed.username = UserReport_Sold.username
-			)
-		
-        ORDER BY num_listed DESC
-	) AS ListedSoldT
-;
-
-
-CREATE VIEW UserReport_LSP AS
-Select *
-FROM
-	(
-		#SELECT UserReport_LS.username, num_listed, num_sold, num_purchased
-		SELECT IFNULL(UserReport_LS.username, UserReport_Purchased.username) AS username, num_listed, num_sold, num_purchased
-		FROM
-			(
-				UserReport_LS LEFT JOIN UserReport_Purchased
-				ON UserReport_LS.username = UserReport_Purchased.username
-			)
-
-		UNION
-
-		#SELECT UserReport_LS.username, num_listed, num_sold, num_purchased
-        SELECT IFNULL(UserReport_LS.username, UserReport_Purchased.username) AS username, num_listed, num_sold, num_purchased
-		FROM
-			(
-				UserReport_LS RIGHT JOIN UserReport_Purchased
-				ON UserReport_LS.username = UserReport_Purchased.username
-			)
-		
-        ORDER BY num_listed DESC
-	) AS ListedSoldPurchasedT
-;
-
-
-CREATE VIEW UserReport AS
-Select *
-FROM
-	(
-		#SELECT ListedSoldView.username, num_listed, num_sold, num_purchased
-		SELECT IFNULL(UserReport_LSP.username, UserReport_Rated.username) AS username, num_listed, num_sold, num_purchased, num_rated
-		FROM
-			(
-				UserReport_LSP LEFT JOIN UserReport_Rated
-				ON UserReport_LSP.username = UserReport_Rated.username
-			)
-
-		UNION
-
-		#SELECT ListedSoldView.username, num_listed, num_sold, num_purchased
-        SELECT IFNULL(UserReport_LSP.username, UserReport_Rated.username) AS username, num_listed, num_sold, num_purchased, num_rated
-		FROM
-			(
-				UserReport_LSP RIGHT JOIN UserReport_Rated
-				ON UserReport_LSP.username = UserReport_Rated.username
-			)
-		
-        ORDER BY num_listed DESC
-	) AS LSPRatedT
-;
-
-
+CREATE VIEW UniqueRatings AS
+SELECT r.username, i.item_name
+FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id;
 
 
 -- **********************************
@@ -263,20 +122,13 @@ INSERT INTO AdminUser(username, position) VALUES ('admin2', 'Chief Techy');
 
 
 
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00,'2018-03-31 12:22', 3, 'user1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Canon Powershot', 'Point and shoot!', 2, false, 40.00, 60.00, 80.00,'2018-04-01 14:14:00', 3, 'user1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Nikon D3', 'New and in box!', 4, false, 1500.00, 1800.00, 2000.00,'2018-04-05 09:19:00', 3, 'user2');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00,'2018-04-05 15:33:00', 1, 'user3');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00,'2018-04-05 16:48:00', 2, 'admin1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 8.00,'2018-04-08 10:01:00', 2, 'admin2');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00,'2018-04-09 22:09:00', 5, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Canon Powershot', 'Point and shoot!', 2, false, 40.00, 60.00, 80.00,DATE_ADD(NOW(), INTERVAL 7 DAY), 3, 'user1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Nikon D3', 'New and in box!', 4, false, 1500.00, 1800.00, 2000.00, '2018-04-04', 3, 'user2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user3');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00, DATE_ADD(NOW(), INTERVAL 5 DAY), 2, 'admin1');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 8.00,'2018-04-01', 2, 'admin2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 5, 'user6');
 
 
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
@@ -299,6 +151,3 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 3, 150
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 1795.00, '2018-04-04 12:27');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
-
-
-

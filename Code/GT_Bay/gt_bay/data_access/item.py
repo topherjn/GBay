@@ -146,7 +146,7 @@ class Item(BaseDAO):
 
         place_bid_sql = """
         INSERT INTO Bid (username, item_id, bid_amount)
-        SELECT '{username}', {item_id}, {bid_amount}
+        SELECT username, item_id, bid_amount
         WHERE (SELECT auction_end_time from Item where item_id = {item_id}) > CURRENT_TIMESTAMP
           AND ((SELECT count(*) from Bid where item_id = {item_id}) = 0
                OR (SELECT max(bid_amount) + 1 from Bid where item_id = {item_id}) <= {bid_amount});
@@ -225,8 +225,8 @@ class Item(BaseDAO):
         error = None
 
         insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-                   "min_sale_price, get_it_now_price, auction_length, auction_end_time, category_id, listing_username) " \
-                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, {}, '{}', {}, '{}')".format(
+                   "min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) " \
+                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, DATE_ADD(NOW(), INTERVAL {} DAY) , {}, '{}')".format(
             self._item_name,
             self._description,
             self._item_condition,
@@ -235,7 +235,6 @@ class Item(BaseDAO):
             self._minimum_sale,
             self._get_it_now,
             self._auction_length,
-            self._auction_end_time,
             self._category_id,
             self._listing_username)
 
