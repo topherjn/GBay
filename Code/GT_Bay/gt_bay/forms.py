@@ -181,6 +181,8 @@ class SearchForm(FlaskForm):
 
 class ItemBiddingForm(FlaskForm):
     item_id = HiddenField('item_id')
+    item_name = HiddenField('item_name')
+    desc = HiddenField('desc')
     your_bid = DecimalField('your_bid', validators=[DataRequired()])
     min_bid = HiddenField('min_bid')
     getnow_price = HiddenField('getnow_price')
@@ -202,15 +204,16 @@ class ItemBiddingForm(FlaskForm):
             result = False
             self.your_bid.errors.append("At most 2 decimal places accepted (e.g. 100.00)")
 
-	# check the value of your_bid
-        logging.debug("\n\tItemBiddingForm.validate: {} {} {} {}".
-                      format(self.item_id, self.your_bid, self.min_bid, self.getnow_price))
+        # check the value of your_bid
+        logging.debug("\n\tItemBiddingForm.validate: {} {} {} {}".format(self.item_id, self.your_bid, self.min_bid,
+                                                                         self.getnow_price))
         if bid_amount < Decimal(self.min_bid.data):
             result = False
             self.your_bid.errors.append("Your bid must be at least the minimum bid ${}".format(self.min_bid.data))
         if self.getnow_price.data != '' and bid_amount >= Decimal(self.getnow_price.data):
             result = False
-            self.your_bid.errors.append("Your bid exceeds the get it now price, please use the Get It Now purchase option")
+            self.your_bid.errors.append("Your bid exceeds the get it now price, please use the Get It Now purchase \
+            option")
 
         return result
 
@@ -224,4 +227,20 @@ class ItemRatingForm(FlaskForm):
     comments = TextAreaField('comments')
     submit = SubmitField('Add Rating')
 
-    
+
+class itemEditDescForm(FlaskForm):
+    item_id = HiddenField('item_id')
+    item_name = HiddenField('item_name')
+    #description = TextAreaField('description', validators=[DataRequired()])
+    description = TextAreaField('description', validators=[Optional()])
+    submit = SubmitField('Save Description')
+
+    def validate(self):
+        logger.debug("\n\titemEditDescForm: In validate method")
+        logger.debug("\t\tself.description.data = {}".format(self.description.data))
+        if not FlaskForm.validate(self):
+            logger.debug("\t\t\treturning False")
+            return False
+        else:
+            logger.debug("\t\t\treturning True")
+            return True

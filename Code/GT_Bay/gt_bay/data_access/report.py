@@ -1,4 +1,5 @@
 from data_access.base_data_access_object import BaseDAO
+from data_access.sql_statements import SQLStatements
 import logging
 import pymysql.cursors
 
@@ -48,7 +49,7 @@ class Report(BaseDAO):
         return ret_val, error
 
     def category_report(self):
-        category_report_sql =  """SELECT * FROM CategoryReport;"""
+        category_report_sql = """SELECT * FROM CategoryReport;"""
         ret_val = None
         error = None
 
@@ -57,6 +58,28 @@ class Report(BaseDAO):
             
             cursor = db.cursor(pymysql.cursors.DictCursor)
             cursor.execute(category_report_sql)
+            ret_val = cursor.fetchall()
+            if ret_val is None:
+                error = "Username and or password is incorrect."
+            logging.debug("data {}".format(ret_val))
+
+        except:
+            error = "Unable to connect please try again later."
+
+        db.close()
+
+        return ret_val, error
+
+    def user_report(self):
+        user_report_sql = SQLStatements.user_report
+        ret_val = None
+        error = None
+
+        db = Report.get_db()
+        try:
+
+            cursor = db.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(user_report_sql)
             ret_val = cursor.fetchall()
             if ret_val is None:
                 error = "Username and or password is incorrect."
