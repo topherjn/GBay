@@ -70,7 +70,7 @@ class User(BaseDAO):
         error = None
         logging.debug("register_user user_name={}, password={}".format(user_name, password))
 
-        insert_regular_user=SQLStatements.insert_regular_user.format(user_name, password, first_name, last_name)
+        insert_regular_user = SQLStatements.insert_regular_user.format(user_name, password, first_name, last_name)
 
         db = User.get_db()
         try:

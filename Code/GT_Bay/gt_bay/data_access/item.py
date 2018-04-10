@@ -6,6 +6,7 @@ from pymysql import IntegrityError
 import pymysql.cursors
 
 from data_access.base_data_access_object import BaseDAO
+from data_access.sql_statements import SQLStatements
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

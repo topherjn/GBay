@@ -6,6 +6,7 @@ from pymysql import IntegrityError
 import pymysql.cursors
 
 from data_access.base_data_access_object import BaseDAO
+from data_access.sql_statements import SQLStatements
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -24,11 +25,7 @@ class Rating(BaseDAO):
 
     def get_rating(self, item_id):
         logging.debug(item_id)
-        get_rating_sql =  """
-            SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name, i.item_id
-            FROM Rating r INNER JOIN Item i ON i.item_id = r.item_id WHERE item_name = 
-            (SELECT item_name FROM Item WHERE item_id = {item_id}) ORDER BY r.rating_time DESC;
-            """.format(item_id=item_id)
+        get_rating_sql = SQLStatements.get_rating.format(item_id=item_id)
 
         logging.debug(get_rating_sql)
         ret_val = None
@@ -51,11 +48,7 @@ class Rating(BaseDAO):
         return ret_val, error
 
     def get_average_rating(self, item_id):
-        get_avg_rating_sql = """
-                    SELECT AVG(numstars)
-                    FROM Rating r inner join Item i on r.item_id = i.item_id
-                    WHERE item_name = (SELECT item_name FROM Item WHERE item_id = {item_id})
-                    """.format(item_id=item_id)
+        get_avg_rating_sql = SQLStatements.get_avg_rating.format(item_id=item_id)
 
         logging.debug(get_avg_rating_sql)
 
@@ -85,19 +78,15 @@ class Rating(BaseDAO):
         ret_val = None
         error = None
 
-        check_already_exists = """
-        SELECT r.username, i.item_name
-        FROM Rating r INNER JOIN Item i ON r.item_id = i.item_id
-        WHERE r.username = '{}' AND i.item_name = '{}'
-        """.format(self._username,self._item_name)
+        check_already_exists_sql = SQLStatements.check_already_exists.format(self._username,self._item_name)
 
-        logging.debug(check_already_exists)
+        logging.debug(check_already_exists_sql)
 
         db = Rating.get_db()
         try:
 
             cursor = db.cursor(pymysql.cursors.DictCursor)
-            cursor.execute(check_already_exists)
+            cursor.execute(check_already_exists_sql)
             ret_val = cursor.fetchall()
             if ret_val is not None:
                 error = "You already rated this item."
@@ -112,8 +101,7 @@ class Rating(BaseDAO):
             self._numstars = 0
 
         if len(ret_val) < 1:
-            save_rating_sql = """
-            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
+            save_rating_sql = SQLStatements.save_rating.format(
                 self._username,
                 self._itemid,
                 self._numstars,
@@ -136,9 +124,7 @@ class Rating(BaseDAO):
         return ret_val, error
 
     def delete_rating(self,username,item_id):
-        delete_rating_sql = """
-        DELETE FROM Rating WHERE item_id = {item_id} AND username = '{username}'
-        """.format(item_id=item_id,username=username)
+        delete_rating_sql = SQLStatements.delete_rating.format(item_id=item_id,username=username)
 
         ret_val = None
         error = None

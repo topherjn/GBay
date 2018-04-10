@@ -3,6 +3,7 @@ import logging
 from pymysql import IntegrityError
 
 from data_access.base_data_access_object import BaseDAO
+from data_access.sql_statements import SQLStatements
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -12,16 +13,15 @@ class Category(BaseDAO):
 
     @staticmethod
     def get_categories():
+        get_categories_sql = SQLStatements.get_categories
         category_choices=[]
         error = None
         logging.debug("get_categories")
 
-        select_sql = "SELECT category_id, category_name FROM Category ORDER BY category_id"
-
         db = Category.get_db()
         try:
             cursor = db.cursor()
-            cursor.execute(select_sql)
+            cursor.execute(get_categories_sql)
 
             results = cursor.fetchall()
 
