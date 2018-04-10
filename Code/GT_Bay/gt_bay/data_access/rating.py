@@ -124,7 +124,7 @@ class Rating(BaseDAO):
         return ret_val, error
 
     def delete_rating(self,username,item_id):
-        delete_rating_sql = SQLStatements.delete_rating.format(item_id=item_id,username=username)
+        delete_rating_sql = SQLStatements.delete_rating.format(item_id,username)
 
         ret_val = None
         error = None
