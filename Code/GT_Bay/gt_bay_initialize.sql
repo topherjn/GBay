@@ -1,7 +1,7 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
 -- Sample data
-DROP DATABASE cs6400_spr18_team047;
+--DROP DATABASE cs6400_spr18_team047;
 CREATE DATABASE cs6400_spr18_team047;
 USE cs6400_spr18_team047;
 
