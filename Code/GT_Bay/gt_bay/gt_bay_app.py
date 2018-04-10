@@ -216,7 +216,7 @@ def get_item():
     min_bid, mb_error = Item.get_min_bid(item_id)
     form.min_bid.data = min_bid[0]
 
-    return render_template('item_description.html', ui_data={}, form=form,
+    return render_template('item_description.html', ui_data={}, form=form, now=datetime.now(),
                            item=item, bids=bids, getBids_error=getBids_error, mb_error=mb_error)
 
 
