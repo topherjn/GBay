@@ -1,7 +1,7 @@
 -- **********************************
 -- DDL for cs6400_spr18_team047 DB
 -- Sample data
---DROP DATABASE cs6400_spr18_team047;
+DROP DATABASE cs6400_spr18_team047;
 CREATE DATABASE cs6400_spr18_team047;
 USE cs6400_spr18_team047;
 
@@ -279,15 +279,18 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
    VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00,'2018-04-09 22:09:00', 5, 'user6');
 
 
--- Ratings test items
+-- Items to test ratings
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Roomba', 'Autonomously cleans rooms.  Pet version.', 4, false, 100.00, 200.00, 500.00, '2018-01-11', 3, 'user1');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Roomba', 'Vacuums by itself.', 3, false, 50.00, 150.00, 450.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 3, 'user1');
-INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Roomba', 'Doubles as a cat mount.', 4, true, 250.00, 450.00, 650.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 3, 'user2');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Roomba', 'Doubles as a cat mount.', 4, true, 250.00, 450.00, NULL, DATE_ADD(NOW(), INTERVAL 7 DAY), 3, 'user2');
 
+-- Items added in order to always have live auctions
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Chess', 'Classic ancient board game', 4, false, 20.00, 30.00, 60.00, DATE_ADD(NOW(), INTERVAL 1 DAY), 6, 'user1');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Chisel', 'Useful for woodwork', 3, true, 2.00, 5.00, 15.00, DATE_ADD(NOW(), INTERVAL 3 DAY), 4, 'user2');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Cricket Bat', 'For your favorite Limey', 1, true, 250.00, 450.00, 650.00, DATE_ADD(NOW(), INTERVAL 5 DAY), 6, 'user3');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) VALUES ('Candles (1 dozen)', 'For emergencies', 2, true, 1.00, 4.00, 12.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 4, 'user3');
+
+
 
 -- Ratings from Piazza
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
