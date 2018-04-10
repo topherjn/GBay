@@ -42,22 +42,9 @@ class Item(BaseDAO):
 
     @staticmethod
     def get_item(item_id):
+        get_item_sql = SQLStatements.get_item.format(item_id=item_id)
         ret_val = None
         error = None
-
-        get_item_sql = """
-        SELECT
-          i.item_name,
-          i.description,
-          c.category_name,
-          i.item_condition,
-          i.returnable,
-          i.get_it_now_price,
-          i.auction_end_time,
-	  i.listing_username
-        FROM Item i INNER JOIN Category c ON i.category_id = c.category_id
-        WHERE i.item_id = {item_id};
-        """.format(item_id=item_id)
 
         db = Item.get_db()
         try:
@@ -75,19 +62,9 @@ class Item(BaseDAO):
 
     @staticmethod
     def get_bids(item_id):
+        get_bids_sql = SQLStatements.get_bids.format(item_id=item_id)
         ret_val = None
         error = None
-
-        get_bids_sql = """
-        SELECT
-          b.bid_amount,
-          b.bid_time,
-          u.username
-        FROM Bid b INNER JOIN RegularUser u ON b.username = u.username
-        WHERE b.item_id = {item_id}
-        ORDER BY b.bid_time DESC
-        LIMIT 4;
-        """.format(item_id=item_id)
 
         db = Item.get_db()
         try:
@@ -108,18 +85,9 @@ class Item(BaseDAO):
 
     @staticmethod
     def get_min_bid(item_id):
+        get_min_sql = SQLStatements.get_min.format(item_id=item_id)
         ret_val = None
         error = None
-
-        get_min_sql = """
-        SELECT
-          IF(IFNULL(max(b.bid_amount),-1) >= i.starting_bid, 
-             max(b.bid_amount) + 1,
-             i.starting_bid) 
-          AS 'min_bid'
-        FROM Item i JOIN Bid b ON b.item_id = i.item_id
-        WHERE i.item_id = {item_id};
-        """.format(item_id=item_id)
 
         db = Item.get_db()
         try:
@@ -142,16 +110,9 @@ class Item(BaseDAO):
 
     @staticmethod
     def place_bid(item_id, bid_amount, username):
+        place_bid_sql = SQLStatements.place_bid.format(username=username, item_id=item_id, bid_amount=bid_amount)
         ret_val = None
         error = None
-
-        place_bid_sql = """
-        INSERT INTO Bid (username, item_id, bid_amount)
-        SELECT '{username}', {item_id}, {bid_amount}
-        WHERE (SELECT auction_end_time from Item where item_id = {item_id}) > CURRENT_TIMESTAMP
-          AND ((SELECT count(*) from Bid where item_id = {item_id}) = 0
-               OR (SELECT max(bid_amount) + 1 from Bid where item_id = {item_id}) <= {bid_amount});
-        """.format(username=username, item_id=item_id, bid_amount=bid_amount)
 
         logging.debug("place_bid SQL: {}".format(place_bid_sql))
 
@@ -173,30 +134,11 @@ class Item(BaseDAO):
 
     @staticmethod
     def get_now(item_id, username):
+        get_now_sql1 = SQLStatements.get_now_1
+        get_now_sql2 = SQLStatements.get_now_2.format(item_id=item_id)
+        get_now_sql3 = SQLStatements.get_now_3.format(username=username, item_id=item_id)
         ret_val = None
         error = None
-
-        get_now_sql1 = """
-        SET @now = CURRENT_TIMESTAMP;
-        """
-
-        get_now_sql2 = """
-        UPDATE Item
-        SET auction_end_time = 
-        IF(auction_end_time > @now, 
-        @now, auction_end_time)
-        WHERE item_id = {item_id};
-        """.format(item_id=item_id)
-
-        get_now_sql3 = """
-        INSERT INTO Bid 
-        (username, item_id, bid_amount, bid_time)
-        SELECT 
-        '{username}', {item_id}, get_it_now_price, @now
-        FROM Item 
-        WHERE Item.item_id = {item_id} AND 
-              Item.auction_end_time = @now;
-        """.format(username=username, item_id=item_id)
 
         logging.debug("get_now SQL 1: {}".format(get_now_sql1))
         logging.debug("get_now SQL 2: {}".format(get_now_sql2))
@@ -225,9 +167,7 @@ class Item(BaseDAO):
         ret_val = None
         error = None
 
-        insert_item="INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-                   "min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) " \
-                   "VALUES ('{}', '{}', {}, {}, {}, {}, {}, DATE_ADD(NOW(), INTERVAL {} DAY) , {}, '{}')".format(
+        insert_item = SQLStatements.insert_item.format(
             self._item_name,
             self._description,
             self._item_condition,
@@ -255,47 +195,8 @@ class Item(BaseDAO):
         return ret_val, error
 
     def search(self, key_word, category, minPrice, maxPrice, conditionAtLeast):
-        search_sql = """
-            SELECT
-              Item.item_id,
-              item_name,
-              bid_amount AS current_bid,
-              username   AS high_bidder,
-              get_it_now_price,
-              auction_end_time
-            FROM Item
-              INNER JOIN Category
-                ON Item.category_id = Category.category_id
-              LEFT JOIN
-              (SELECT
-                 item_id,
-                 bid_amount,
-                 username
-               FROM Bid b1 NATURAL JOIN
-                 (SELECT
-                    item_id,
-                    max(bid_amount) AS bid_amount
-                  FROM Bid
-                  GROUP BY item_id) AS b2)
-                AS CurrentBid
-                ON Item.item_id = CurrentBid.item_id
-            WHERE auction_end_time > NOW()
-                  AND (item_name LIKE CONCAT('%', '{key_word}', '%')
-                       OR description LIKE CONCAT('%', '{key_word}', '%'))
-                  AND ({category} IS NULL OR {category} = 0
-                       OR Item.category_id = {category})
-                  AND ({minPrice} IS NULL OR
-                       IF(bid_amount IS NULL, starting_bid, bid_amount)
-                       >= {minPrice})
-                  AND ({maxPrice} IS NULL OR
-                       IF(bid_amount IS NULL, starting_bid, bid_amount)
-                       <= {maxPrice})
-                  AND ({conditionAtLeast} IS NULL OR
-                       item_condition >= {conditionAtLeast})
-            ORDER BY auction_end_time;
-        """.format(key_word=key_word, category=category, minPrice=minPrice,
+        search_sql = SQLStatements.search.format(key_word=key_word, category=category, minPrice=minPrice,
                    maxPrice=maxPrice, conditionAtLeast=conditionAtLeast)
-
         logging.debug("SQL [{}]".format(search_sql))
         ret_val = None
         error = None
@@ -322,19 +223,16 @@ class Item(BaseDAO):
 
     @staticmethod
     def updateDesc(item_id, desc):
+        update_desc_sql = SQLStatements.update_desc.format(desc=desc, item_id=item_id)
         logging.debug("persist item")
         ret_val = None
         error = None
 
-        updateDesc_sql = """UPDATE Item
-                            SET description = '{desc}'
-                            WHERE item_id = {item_id};""".format(desc=desc, item_id=item_id)
-
-        logging.debug(updateDesc_sql)
+        logging.debug(update_desc_sql)
         db = Item.get_db()
         try:
             cursor = db.cursor()
-            cursor.execute(updateDesc_sql)
+            cursor.execute(update_desc_sql)
             db.commit()
             ret_val = cursor.lastrowid
         except:
