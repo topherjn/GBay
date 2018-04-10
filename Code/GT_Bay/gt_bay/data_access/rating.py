@@ -110,7 +110,7 @@ class Rating(BaseDAO):
 
         if len(ret_val) < 1:
             save_rating_sql = """
-            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
+            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}',"{}")""".format(
                 self._username,
                 self._itemid,
                 self._numstars,
