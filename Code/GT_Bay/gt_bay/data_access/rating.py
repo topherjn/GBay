@@ -108,13 +108,16 @@ class Rating(BaseDAO):
         logging.debug("already exists?")
         logging.debug(ret_val)
 
+        if self._numstars is None:
+            self._numstars = 0
+
         if len(ret_val) < 1:
             save_rating_sql = """
-            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}',"{}")""".format(
+            INSERT INTO Rating(username,item_id,numstars,comments) VALUES ('{}','{}','{}','{}')""".format(
                 self._username,
                 self._itemid,
                 self._numstars,
-                self._comments)
+                db.escape_string(self._comments))
 
             logging.debug(save_rating_sql)
 
