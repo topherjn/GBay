@@ -104,8 +104,8 @@ def list_new_item():
             now_sale_price = request.form['now_sale_price']
 
         item = Item(0,
-                    request.form['item_name'],
-                    request.form['description'],
+                    request.form['item_name'].replace("'", "''"),
+                    request.form['description'].replace("'", "''"),
                     request.form['category'],
                     request.form['condition'],
                     returnable,
