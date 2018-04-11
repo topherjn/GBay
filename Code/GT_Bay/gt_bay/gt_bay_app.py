@@ -40,7 +40,8 @@ def login():
     error = None
     if form.validate_on_submit():
         logging.debug("user_name={}, password={}".format(request.form['user_name'], request.form['password']))
-        user, error = User.login(request.form['user_name'], request.form['password'])
+        user, error = User.login(request.form['user_name'],
+                                 request.form['password'])
         logging.debug("user={}, error={}".format(user, error))
         if user is not None:
             session['user'] = user.to_json()
@@ -72,8 +73,10 @@ def register():
     logging.debug("IN register method")
     if form.validate_on_submit():
         logging.debug("PASSED form.validate_on_submit")
-        user, error = User.register_user(request.form['user_name'], request.form['password'],
-                                         request.form['first_name'], request.form['last_name'])
+        user, error = User.register_user(request.form['user_name'],
+                                         request.form['password'],
+                                         request.form['first_name'],
+                                         request.form['last_name'])
         if user is not None:
             # session['user'] = user.to_json()
             return redirect(url_for('login'))
@@ -104,8 +107,8 @@ def list_new_item():
             now_sale_price = request.form['now_sale_price']
 
         item = Item(0,
-                    request.form['item_name'].replace("'", "''"),
-                    request.form['description'].replace("'", "''"),
+                    request.form['item_name'],
+                    request.form['description'],
                     request.form['category'],
                     request.form['condition'],
                     returnable,

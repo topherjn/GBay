@@ -45,10 +45,11 @@ class User(BaseDAO):
         ret_val = None
         error = None
         logging.debug("login user_name={}, password={}".format(user_name, password))
-
-        select_gt_bay_user = SQLStatements.select_gt_bay_user.format(user_name, password)
-
         db = User.get_db()
+
+        select_gt_bay_user = SQLStatements.select_gt_bay_user.format(
+            db.escape_string(user_name), db.escape_string(password))
+
         try:
             cursor = db.cursor()
             cursor.execute(select_gt_bay_user)
@@ -70,9 +71,13 @@ class User(BaseDAO):
         error = None
         logging.debug("register_user user_name={}, password={}".format(user_name, password))
 
-        insert_regular_user = SQLStatements.insert_regular_user.format(user_name, password, first_name, last_name)
-
         db = User.get_db()
+        insert_regular_user = SQLStatements.insert_regular_user.format(
+            db.escape_string(user_name),
+            db.escape_string(password),
+            db.escape_string(first_name),
+            db.escape_string(last_name))
+
         try:
             cursor = db.cursor()
             cursor.execute(insert_regular_user)

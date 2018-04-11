@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Regexp, Optional
 from data_access.category import Category
 from decimal import Decimal
 import re
+import string
 import logging
 
 logger = logging.getLogger()
@@ -29,6 +30,16 @@ class RegisterForm(FlaskForm):
         if not FlaskForm.validate(self):
             return False
         result = True
+        invalidChars = set(string.punctuation.replace("_", ""))
+
+        if any(char in invalidChars for char in self.password.data):
+            self.password.errors.append('Password can only include Numbers Letters and Underscore')
+            result = False
+
+        if any(char in invalidChars for char in self.user_name.data):
+            self.user_name.errors.append('Username can only include Numbers Letters and Underscore')
+            result = False
+
         if self.password.data != self.confirm.data:
             logging.debug("passwords not equal")
             self.confirm.errors.append('Password and confirm password are not equal.')

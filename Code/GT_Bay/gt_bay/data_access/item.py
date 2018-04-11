@@ -166,10 +166,11 @@ class Item(BaseDAO):
         logging.debug("persist item")
         ret_val = None
         error = None
+        db = self.get_db()
 
         insert_item = SQLStatements.insert_item.format(
-            self._item_name,
-            self._description,
+            db.escape_string(self._item_name),
+            db.escape_string(self._description),
             self._item_condition,
             self._returnable,
             self._starting_bid,
@@ -179,8 +180,6 @@ class Item(BaseDAO):
             self._category_id,
             self._listing_username)
 
-        logging.debug(insert_item)
-        db = self.get_db()
         try:
             cursor = db.cursor()
             cursor.execute(insert_item)
