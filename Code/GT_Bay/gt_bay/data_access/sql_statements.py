@@ -4,14 +4,14 @@ class SQLStatements(object):
 
 
 
-    ##### category: START
+    #-------------------------------------------------------------------------------- category: START
     # get all categories
     get_categories = """SELECT category_id, category_name FROM Category ORDER BY category_id;"""
-    ##### category: END
+    #-------------------------------------------------------------------------------- category: END
 
 
-    ##### item.py: START
-    # x
+    #-------------------------------------------------------------------------------- item.py: START
+    # get item by item_id
     get_item = """
         SELECT
           i.item_name,
@@ -26,7 +26,7 @@ class SQLStatements(object):
         WHERE i.item_id = {item_id};
     """
 
-    # x
+    # get bids for item by item_id
     get_bids = """
         SELECT
           b.bid_amount,
@@ -38,7 +38,7 @@ class SQLStatements(object):
         LIMIT 4;
     """
 
-    # x
+    # get / calculate minimum acceptable bid for item by item_id
     get_min = """
         SELECT
           IF(IFNULL(max(b.bid_amount),-1) >= i.starting_bid, 
@@ -49,7 +49,7 @@ class SQLStatements(object):
         WHERE i.item_id = {item_id};
     """
 
-    # x
+    # place bid for bid_amount for item by item_id on behalf of username
     place_bid = """
         INSERT INTO Bid (username, item_id, bid_amount)
         SELECT '{username}', {item_id}, {bid_amount}
@@ -58,10 +58,10 @@ class SQLStatements(object):
                OR (SELECT max(bid_amount) + 1 from Bid where item_id = {item_id}) <= {bid_amount});
     """
 
-    # x
+    # set @now to CURRENT_TIMESTAMP to be used in get_now_2 and get_now_3 queries
     get_now_1 = """SET @now = CURRENT_TIMESTAMP;"""
 
-    # x
+    # end auction by updating auction_end_time
     get_now_2 = """
         UPDATE Item
         SET auction_end_time = 
@@ -70,7 +70,7 @@ class SQLStatements(object):
         WHERE item_id = {item_id};
     """
 
-    # x
+    # add winning ("GET IT NOW!") bid
     get_now_3 = """
         INSERT INTO Bid 
         (username, item_id, bid_amount, bid_time)
@@ -81,14 +81,14 @@ class SQLStatements(object):
               Item.auction_end_time = @now;
     """
 
-    # x
+    # add item
     insert_item = """
       INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
       "min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) " \
       "VALUES ('{}', '{}', {}, {}, {}, {}, {}, DATE_ADD(NOW(), INTERVAL {} DAY) , {}, '{}')
     """
 
-    # x
+    # search for items based upon search criteria (if no search criteria are supplied, all active items are returned)
     search = """
         SELECT
           Item.item_id,
@@ -129,16 +129,16 @@ class SQLStatements(object):
         ORDER BY auction_end_time;
     """
 
-    # x
+    # update item description by item_id
     update_desc = """
         UPDATE Item
         SET description = '{desc}'
         WHERE item_id = {item_id};
     """
-    ##### item.py: END
+    #-------------------------------------------------------------------------------- item.py: END
 
 
-    ##### rating.py: START
+    #-------------------------------------------------------------------------------- rating.py: START
     # get item ratings by item_id
     get_rating = """
       SELECT r.username, r.numstars, r.rating_time, r.comments, i.item_name, i.item_id
@@ -165,10 +165,10 @@ class SQLStatements(object):
 
     # delete rating by item_id
     delete_rating = """DELETE FROM Rating WHERE item_id = '{}' AND username = '{}';"""
-    ##### rating.py: END
+    #-------------------------------------------------------------------------------- rating.py: END
 
 
-    ##### report.py: START
+    #-------------------------------------------------------------------------------- report.py: START
     # get data for the Auction Results report
     auction_results = """
         SELECT
@@ -194,10 +194,10 @@ class SQLStatements(object):
 
     # get data for the User Report
     user_report = """SELECT * FROM UserReport;"""
-    ##### report.py: END
+    #-------------------------------------------------------------------------------- report.py: END
 
 
-    ##### user.py: START
+    #-------------------------------------------------------------------------------- user.py: START
     # attempt to get user (and admin position if user is an admin) based on username and password
     select_gt_bay_user = """SELECT RegularUser.username, AdminUser.position 
                                 FROM RegularUser LEFT JOIN AdminUser ON RegularUser.username = AdminUser.username 
@@ -206,4 +206,4 @@ class SQLStatements(object):
     # registers new user
     insert_regular_user = """INSERT INTO RegularUser(username, password, first_name, last_name) 
                               VALUES ('{}', '{}', '{}', '{}');"""
-    ##### user.py: END
+    #-------------------------------------------------------------------------------- user.py: END
