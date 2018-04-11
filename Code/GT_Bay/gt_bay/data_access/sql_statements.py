@@ -2,8 +2,6 @@ class SQLStatements(object):
     """This class aggregates all of the app's SQL for grading convenience.
     """
 
-
-
     #-------------------------------------------------------------------------------- category: START
     # get all categories
     get_categories = """SELECT category_id, category_name FROM Category ORDER BY category_id;"""
@@ -83,9 +81,10 @@ class SQLStatements(object):
 
     # add item
     insert_item = """
-      INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, " \
-      "min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) " \
-      "VALUES ('{}', '{}', {}, {}, {}, {}, {}, DATE_ADD(NOW(), INTERVAL {} DAY) , {}, '{}')
+      INSERT INTO Item(item_name, description, item_condition, returnable, 
+                       starting_bid, min_sale_price, get_it_now_price, auction_end_time, 
+                       category_id, listing_username) 
+             VALUES ('{}', '{}', {}, {}, {}, {}, {}, DATE_ADD(NOW(), INTERVAL {} DAY) , {}, '{}')
     """
 
     # search for items based upon search criteria (if no search criteria are supplied, all active items are returned)

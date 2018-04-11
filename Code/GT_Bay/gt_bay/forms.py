@@ -37,8 +37,8 @@ class RegisterForm(FlaskForm):
 
 
 class ListNewItemForm(FlaskForm):
-    item_name = StringField('item_name', validators=[DataRequired()])
-    description = TextAreaField('description', validators=[DataRequired()])
+    item_name = StringField('item_name', validators=[DataRequired("Item Name is required.")])
+    description = TextAreaField('description', validators=[DataRequired("Description is required.")])
     category_choices, error = Category.get_categories()
     # category_choices = [(1, 'Art'), (2, 'Books'), (3, 'Electronics'), (4, 'Home & Garden'), (5, 'Sporting Goods'), (6, 'Toys'), (7, 'Other')]
     category = SelectField('category', coerce=int, choices=category_choices)
