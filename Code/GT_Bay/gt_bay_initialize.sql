@@ -272,9 +272,9 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
    VALUES ('Danish Art Book', 'Delicious Danish Art', 3, true, 10.00, 10.00, 10.00,'2018-04-05 15:33:00', 1, 'user3');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 10.00,'2018-04-05 16:48:00', 2, 'admin1');
+   VALUES ('SQL in 10 Minutes', 'Learn SQL really fast!', 1, false, 5.00, 10.00, 12.00,'2018-04-05 16:48:00', 2, 'admin1');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, NULL,'2018-04-08 10:01:00', 2, 'admin2');
+   VALUES ('SQL in 8 Minutes', 'Learn SQL even fastter!', 2, false, 5.00, 8.00, 10.00,'2018-04-08 10:01:00', 2, 'admin2');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
    VALUES ('Pull-up Bar', 'Works on any door frame', 4, false, 20.00, 25.00, 40.00,'2018-04-09 22:09:00', 5, 'user6');
 
