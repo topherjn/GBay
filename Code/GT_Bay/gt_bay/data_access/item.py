@@ -194,13 +194,18 @@ class Item(BaseDAO):
         return ret_val, error
 
     def search(self, key_word, category, minPrice, maxPrice, conditionAtLeast):
-        search_sql = SQLStatements.search.format(key_word=key_word, category=category, minPrice=minPrice,
-                   maxPrice=maxPrice, conditionAtLeast=conditionAtLeast)
-        logging.debug("SQL [{}]".format(search_sql))
         ret_val = None
         error = None
-
         db = self.get_db()
+
+        search_sql = SQLStatements.search.format(
+            key_word=db.escape_string(key_word),
+            category=category,
+            minPrice=minPrice,
+            maxPrice=maxPrice,
+            conditionAtLeast=conditionAtLeast)
+        logging.debug("SQL [{}]".format(search_sql))
+
         try:
             logging.debug("before  cursor.execute(search_sql)")
             cursor = db.cursor(pymysql.cursors.DictCursor)
