@@ -227,13 +227,14 @@ class Item(BaseDAO):
 
     @staticmethod
     def updateDesc(item_id, desc):
-        update_desc_sql = SQLStatements.update_desc.format(desc=desc, item_id=item_id)
-        logging.debug("persist item")
+        logging.debug("persist updated description")
         ret_val = None
         error = None
-
-        logging.debug(update_desc_sql)
         db = Item.get_db()
+
+        update_desc_sql = SQLStatements.update_desc.format(desc=db.escape_string(desc), item_id=item_id)
+        logging.debug(update_desc_sql)
+
         try:
             cursor = db.cursor()
             cursor.execute(update_desc_sql)
