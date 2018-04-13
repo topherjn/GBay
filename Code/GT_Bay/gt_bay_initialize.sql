@@ -256,6 +256,8 @@ INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user4', 'pass4', 'Randy', 'Rorann');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user5', 'pass5', 'Ashod', 'Iankel');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user6', 'pass6', 'Cany', 'Achant');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('sell1', 'pass', 'one', 'sell');  -- user report (1 listed, 1 sold)
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('ghost', 'pass', 'stealthy', 'watcher');  -- user report (no activity)
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin1', 'opensesame', 'Riley', 'Fuiss');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin2', 'opensesayou', 'Tonnis', 'Kinser');
 
@@ -298,6 +300,10 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
 	VALUES ('Cricket Bat', 'For your favorite Limey', 1, true, 250.00, 450.00, 650.00, DATE_ADD(NOW(), INTERVAL 5 DAY), 6, 'user3');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) 
 	VALUES ('Candles (1 dozen)', 'For emergencies', 2, true, 1.00, 4.00, 12.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 4, 'user3');
+
+-- Items added for User Report
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('One Hit Wonder', 'You only have to do it really well once.', 5, false, 1.00, 2.50, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 6, 'sell1');
 
 
 
