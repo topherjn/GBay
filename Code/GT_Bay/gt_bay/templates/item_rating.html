@@ -1,6 +1,7 @@
 {% extends "layout_with_menu.html" %}
 {% block body %}
 <link href="../static/css/stars-stylesheet.css" rel="stylesheet">
+<link href="../static/css/ratings.css" rel="stylesheet">
 <div class="container">
   <div class="panel panel-primary">
     <div class="panel-heading">
@@ -16,18 +17,20 @@
         <label for="average_rating" >Average Star Rating:</label> {{ form.average_rating(id="average_rating", readonly="true", class="form-control", size=20) }}
         <dl>
           {% for rating in rating_results %}
-            {% if rating['username'] == cur_user %}
-              {% set delete_id = rating['item_id'] %}
-              <a href="./delete_rating?item_id={{delete_id}}&amp;username={{cur_user}}&amp;inm={{form.item_name.data}}">Delete My Rating</a>
-            {% endif %}<br />
-            {% for i in range(1,6) %}
-              {% if (i <= rating['numstars']) %} <img src="./images/star-on.svg" />
-              {% else %}                         <img src="./images/star-off.svg" />
-              {% endif %}
-            {% endfor %}
             <span>
+              <dt>Rating: </dt>
+              <dd>
+                  {% for i in range(1,6) %}
+                  {% if (i <= rating['numstars']) %} <img src="./images/star-on.svg" />
+                  {% else %}                         <img src="./images/star-off.svg" />
+                  {% endif %}
+                {% endfor %}
+              </dd>
               <dt>Rated by: </dt>
-              <dd>{{ rating['username'] }}</dd>
+              <dd>{{ rating['username'] }}   {% if rating['username'] == cur_user %}
+                  {% set delete_id = rating['item_id'] %}
+                  <a href="./delete_rating?item_id={{delete_id}}&amp;username={{cur_user}}&amp;inm={{form.item_name.data}}"><strong>[Delete My Rating]</strong></a>
+                {% endif %}<br /></dd>
               <dt>Date: </dt>
               <dd>{{ rating['rating_time'].strftime('%Y-%m-%d') }}</dd>
               <dt>Comment: </dt>
@@ -36,6 +39,7 @@
               {% else %}
                 <dd>{{ rating['comments'] }}</dd>
               {% endif %}
+              <br />
             </span>
           {% endfor %}
         </dl>
