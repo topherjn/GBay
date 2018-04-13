@@ -169,7 +169,7 @@ class Item(BaseDAO):
         db = self.get_db()
 
         insert_item = SQLStatements.insert_item.format(
-            db.escape_string(self._item_name),
+            db.escape_string(self._item_name).strip(),
             db.escape_string(self._description),
             self._item_condition,
             self._returnable,
