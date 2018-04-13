@@ -322,7 +322,7 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
    VALUES ('Garmin GPS', 'Typical GPS unit', 2, false, 25.00, 50.00, 75.00,'2018-04-23 03:15', 3, 'admin2');
 
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
-   VALUES ('MacBook Pro', 'Fanboy favorite', 5, false, 1000.00, 1500.00, NULL,'2018-04-23 01:01', 3, 'user4');
+   VALUES ('MacBook Pro', 'Fanboy favorite', 4, false, 1000.00, 1500.00, NULL,'2018-04-23 01:01', 3, 'user4');
 
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
    VALUES ('Microsoft Surface', 'Listed only to compare unfavorably to the Apple cult', 3, false, 500.00, 750.00, 899.00, '2018-04-23 06:00', 3, 'user5');
