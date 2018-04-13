@@ -31,7 +31,11 @@
               <dt>Date: </dt>
               <dd>{{ rating['rating_time'].strftime('%Y-%m-%d') }}</dd>
               <dt>Comment: </dt>
-              <dd>{{ rating['comments'] }}</dd>
+              {% if rating['comments'] == None %}
+              <dd></dd>
+              {% else %}
+                <dd>{{ rating['comments'] }}</dd>
+              {% endif %}
             </span>
           {% endfor %}
         </dl>
