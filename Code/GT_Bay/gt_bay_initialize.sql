@@ -266,7 +266,7 @@ INSERT INTO AdminUser(username, position) VALUES ('admin1', 'Technical Support')
 INSERT INTO AdminUser(username, position) VALUES ('admin2', 'Chief Techy');
 
 
--- Items from Piazza - changed one book's GINP to NULL
+-- Items from Piazza 
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
    VALUES ('Garmin GPS', 'This is a great GPS', 3, false, 50.00, 70.00, 99.00,'2018-03-31 12:22', 3, 'user1');
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
@@ -305,7 +305,15 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
 	VALUES ('One Hit Wonder', 'You only have to do it really well once.', 5, false, 1.00, 2.50, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 6, 'sell1');
 
+-- Newer seed data
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Garmin GPS', 'Typical GPS unit', 2, false, 25.00, 50.00, 75.00,'2018-04-23 03:15', 3, 'admin2');
 
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('MacBook Pro', 'Fanboy favorite', 5, false, 1000.00, 1500.00, NULL,'2018-04-23 01:01', 3, 'user4');
+
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+   VALUES ('Microsoft Surface', 'Listed only to compare unfavorably to the Apple cult', 3, false, 500.00, 750.00, 899.00, '2018-04-23 06:00', 3, 'user5');
 
 -- Ratings from Piazza
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
@@ -321,6 +329,11 @@ INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('
 INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('user2', 8, 5, 'I love this gadget!','2018-04-01');
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3', 8, 0, 'Lasted one week before it broke');
 
+-- Ratings from seed data
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user5',17, 3, 'Great for getting OMSCS coursework done.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user4',18, 2, 'Looks nice but but underpowered.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3',18, 3, NULL);
+
 -- Bids from Piazza
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 1, 50.00, '2018-03-30 14:53');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 1, 55.00, '2018-03-30 16:45');
@@ -332,3 +345,10 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 3, 150
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 1795.00, '2018-04-04 12:27');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
+
+-- Bid from seed data
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 16, 30.00, '2018-04-17 14:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 16, 31.00, '2018-04-17 20:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 16, 33.00, '2018-04-18 01:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 16, 40.00, '2018-04-18 06:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 16, 45.00, '2018-04-18 14:00');
