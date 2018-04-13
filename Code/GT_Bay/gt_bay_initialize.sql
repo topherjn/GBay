@@ -20,6 +20,7 @@ DROP VIEW IF EXISTS UserReport_Purchased;
 DROP VIEW IF EXISTS UserReport_Rated;
 DROP VIEW IF EXISTS UserReport_LS;
 DROP VIEW IF EXISTS UserReport_LSP;
+DROP VIEW IF EXISTS UserReport_LSPR;
 DROP VIEW IF EXISTS UserReport;
 
 
@@ -108,47 +109,42 @@ FROM
 	) AS ListedT
 ;
 
-
-
-
 CREATE VIEW UserReport_Sold AS
 Select *
 FROM
 	(
 		SELECT listing_username AS username, COUNT(*) AS num_sold
-		FROM Bid b1 
+		FROM Bid b1
 		  NATURAL JOIN (
-			SELECT item_id, max(bid_amount) AS bid_amount 
-			FROM Bid GROUP BY item_id) AS b2 
+			SELECT item_id, max(bid_amount) AS bid_amount
+			FROM Bid GROUP BY item_id) AS b2
 				NATURAL JOIN Item i
 				WHERE auction_end_time < NOW() AND bid_amount >= min_sale_price
 		GROUP BY listing_username
 	) AS SoldT
 ;
 
-
 CREATE VIEW UserReport_Purchased AS
 Select *
 FROM
 	(
 		SELECT username AS username, COUNT(*) AS num_purchased
-		FROM Bid b1 
+		FROM Bid b1
 		NATURAL JOIN (
-			SELECT item_id, max(bid_amount) AS bid_amount 
-			FROM Bid GROUP BY item_id) AS b2 
+			SELECT item_id, max(bid_amount) AS bid_amount
+			FROM Bid GROUP BY item_id) AS b2
 			NATURAL JOIN Item i
 			WHERE auction_end_time < NOW() AND bid_amount >= min_sale_price
 		GROUP BY username
 	) AS PurchasedT
 ;
 
-
 CREATE VIEW UserReport_Rated AS
 Select *
 FROM
 	(
 		SELECT username AS username, COUNT(username) AS num_rated
-		FROM Rating 
+		FROM Rating
 		GROUP BY username
 	) AS RatedT
 ;
@@ -158,7 +154,6 @@ CREATE VIEW UserReport_LS AS
 Select *
 FROM
 	(
-		#SELECT UserReport_Listed.username, num_listed, num_sold
         SELECT IFNULL(UserReport_Listed.username, UserReport_Sold.username) AS username, num_listed, num_sold
 		FROM
 			(
@@ -168,14 +163,13 @@ FROM
 
 		UNION
 
-		#SELECT UserReport_Listed.username, num_listed, num_sold
         SELECT IFNULL(UserReport_Listed.username, UserReport_Sold.username) AS username, num_listed, num_sold
 		FROM
 			(
 				UserReport_Listed RIGHT JOIN UserReport_Sold
 				ON UserReport_Listed.username = UserReport_Sold.username
 			)
-		
+
         ORDER BY num_listed DESC
 	) AS ListedSoldT
 ;
@@ -185,7 +179,6 @@ CREATE VIEW UserReport_LSP AS
 Select *
 FROM
 	(
-		#SELECT UserReport_LS.username, num_listed, num_sold, num_purchased
 		SELECT IFNULL(UserReport_LS.username, UserReport_Purchased.username) AS username, num_listed, num_sold, num_purchased
 		FROM
 			(
@@ -195,24 +188,22 @@ FROM
 
 		UNION
 
-		#SELECT UserReport_LS.username, num_listed, num_sold, num_purchased
         SELECT IFNULL(UserReport_LS.username, UserReport_Purchased.username) AS username, num_listed, num_sold, num_purchased
 		FROM
 			(
 				UserReport_LS RIGHT JOIN UserReport_Purchased
 				ON UserReport_LS.username = UserReport_Purchased.username
 			)
-		
+
         ORDER BY num_listed DESC
 	) AS ListedSoldPurchasedT
 ;
 
 
-CREATE VIEW UserReport AS
+CREATE VIEW UserReport_LSPR AS
 Select *
 FROM
 	(
-		#SELECT ListedSoldView.username, num_listed, num_sold, num_purchased
 		SELECT IFNULL(UserReport_LSP.username, UserReport_Rated.username) AS username, num_listed, num_sold, num_purchased, num_rated
 		FROM
 			(
@@ -222,16 +213,27 @@ FROM
 
 		UNION
 
-		#SELECT ListedSoldView.username, num_listed, num_sold, num_purchased
         SELECT IFNULL(UserReport_LSP.username, UserReport_Rated.username) AS username, num_listed, num_sold, num_purchased, num_rated
 		FROM
 			(
 				UserReport_LSP RIGHT JOIN UserReport_Rated
 				ON UserReport_LSP.username = UserReport_Rated.username
 			)
-		
+
         ORDER BY num_listed DESC
-	) AS LSPRatedT
+	) AS ListedSoldPurchasedRatedT
+;
+
+
+CREATE VIEW UserReport AS
+Select *
+FROM
+	(
+		SELECT u.username, a.num_listed, a.num_sold, a.num_purchased, a.num_rated
+        FROM RegularUser AS u LEFT JOIN UserReport_LSPR AS a
+        ON u.username = a.username
+        ORDER BY a.num_listed DESC, u.username ASC
+	) AS UserReportT
 ;
 
 
@@ -254,6 +256,8 @@ INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user4', 'pass4', 'Randy', 'Rorann');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user5', 'pass5', 'Ashod', 'Iankel');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user6', 'pass6', 'Cany', 'Achant');
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('sell1', 'pass', 'one', 'sell');  -- user report (1 listed, 1 sold)
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('ghost', 'pass', 'stealthy', 'watcher');  -- user report (no activity)
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin1', 'opensesame', 'Riley', 'Fuiss');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin2', 'opensesayou', 'Tonnis', 'Kinser');
 
@@ -297,6 +301,10 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username) 
 	VALUES ('Candles (1 dozen)', 'For emergencies', 2, true, 1.00, 4.00, 12.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 4, 'user3');
 
+-- Items added for User Report
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('One Hit Wonder', 'You only have to do it really well once.', 5, false, 1.00, 2.50, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 6, 'sell1');
+
 
 
 -- Ratings from Piazza
@@ -324,6 +332,3 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 3, 150
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 1795.00, '2018-04-04 12:27');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
-
-
-
