@@ -181,7 +181,8 @@ class SearchForm(FlaskForm):
 
         if (self.minimum_price.data is not None) and (self.maximum_price.data is not None) and \
                 (self.minimum_price.data != '') and (self.maximum_price.data != '') and usd:
-            if self.minimum_price.data > self.maximum_price.data:  # minimum price must be less than maximum price
+            if float(self.minimum_price.data) > float(self.maximum_price.data):  # minimum price must be less than
+                # maximum price
                 logging.debug("\tforms.validate: maximum price is not greater than the minimum_price")
                 self.maximum_price.errors.append('The maximum price must be greater than the minimum price.')
                 result = False
