@@ -260,7 +260,7 @@ def item_rating():
        comments = request.form.get("comments")
 
        rating = Rating(username,item_id,item_name,numstars,comments)
-       result = rating.persist()
+       rating.persist()
 
     if request.method == 'GET':
         item_id = request.args.get('item_id')
@@ -291,7 +291,7 @@ def delete_rating():
 
     rating = Rating()
 
-    result = rating.delete_rating(username,item_id)
+    rating.delete_rating(username,item_id)
 
     return redirect(url_for('item_rating', item_id=item_id,item_name=item_name))
 
