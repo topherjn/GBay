@@ -342,9 +342,9 @@ INSERT INTO Rating(username, item_id, numstars, comments, rating_time) VALUES ('
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3', 8, 0, 'Lasted one week before it broke');
 
 -- Ratings from seed data
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user5',17, 3, 'Great for getting OMSCS coursework done.');
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user4',18, 2, 'Looks nice but but underpowered.');
-INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3',18, 3, NULL);
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user5',22, 3, 'Great for getting OMSCS coursework done.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user4',23, 2, 'Looks nice but but underpowered.');
+INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3',23, 3, NULL);
 
 -- Bids from Piazza
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 1, 50.00, '2018-03-30 14:53');
@@ -358,18 +358,18 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 179
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
 
-<<<<<<< HEAD
+
 -- Bid from seed data
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 16, 30.00, '2018-04-17 14:00');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 16, 31.00, '2018-04-17 20:00');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 16, 33.00, '2018-04-18 01:00');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 16, 40.00, '2018-04-18 06:00');
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 16, 45.00, '2018-04-18 14:00');
-=======
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 21, 30.00, '2018-04-17 14:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 21, 31.00, '2018-04-17 20:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 21, 33.00, '2018-04-18 01:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 21, 40.00, '2018-04-18 06:00');
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 21, 45.00, '2018-04-18 14:00');
+
 -- Bids added for Search
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 16, 10.00, NOW());
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 17, 101.00, NOW());
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 18, 250.00, NOW());
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 19, 1000.00, NOW());
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 19, 2000.00, NOW());
->>>>>>> 16e1bd18be67b771a1d4d3aacd318055ca5a099a
+
