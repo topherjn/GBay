@@ -1,0 +1,28 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+
+    <div class="container" style="background-color:lavender;">
+        <div class="jumbotron">
+            <div class="row">
+              <div class="col-xs-6" >
+                <img src="./images/gt_buzz.png" class="img-rounded" alt="GT Bay" width="200" height="200">
+              </div>
+              <div class="col-xs-6" >
+                <h2>It's not junk if someone will pay for it.</h2>
+              </div>
+          </div>
+
+            {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+{% endblock %}

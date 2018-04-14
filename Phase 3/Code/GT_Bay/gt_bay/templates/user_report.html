@@ -1,0 +1,42 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">User Report</h3>
+                {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+            </div>
+
+            {% if user_report %}
+                <table class="table table-striped custab">
+                    <thead>
+
+                    <tr>
+                        <th>Username</th>
+                        <th>Listed</th>
+                        <th>Sold</th>
+                        <th>Purchased</th>
+                        <th>Rated</th>
+                    </tr>
+                    </thead>
+                    {% for report_line in user_report %}
+                        <tr>
+                            <th>{{ report_line['username'] }}</th>
+                            <th>{{ report_line['num_listed'] }}</th>
+                            <th>{{ report_line['num_sold'] }}</th>
+                            <th>{{ report_line['num_purchased'] }}</th>
+                            <th>{{ report_line['num_rated'] }}</th>
+                        </tr>
+
+                    {% endfor %}
+
+                </table>
+            {% endif %}
+
+
+
+        </div>
+        <a href="index">Done</a>
+    </div>
+
+{% endblock %}

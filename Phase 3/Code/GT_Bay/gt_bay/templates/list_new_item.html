@@ -1,0 +1,68 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+    <div class="panel panel-primary">
+     <div class="panel-heading">
+            <h3 class="panel-title">List Item for Auction</h3>
+     </div>
+
+      <form class="form-group" method="post" name="list_new_item">
+          {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+          {{ form.hidden_tag() }}
+      <div class="panel-body">
+
+        <label for="item_name" >Item Name:</label> {{ form.item_name(id="item_name", class="form-control", width="50px", size=20) }}
+        {% for error in form.item_name.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="description" >Description:</label> {{ form.description(id="description", class="form-control", size=20) }}
+        {% for error in form.description.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+
+        <label for="category" >Category:</label> {{ form.category(id="category", class="form-control") }}
+        {% for error in form.category.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="condition" >Condition:</label> {{ form.condition(id="condition", class="form-control") }}
+        {% for error in form.condition.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="start_bid" >Start auction bidding at:</label> {{ form.start_bid(id="start_bid", class="form-control", size=20) }}
+        {% for error in form.start_bid.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="min_sale_price" >Minimum sale price:</label> {{ form.min_sale_price(id="min_sale_price", class="form-control", size=20) }}
+        {% for error in form.min_sale_price.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="auction_days" >Auction ends in:</label> {{ form.auction_days(id="auction_days", class="form-control") }}
+        {% for error in form.auction_days.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="now_sale_price" >Get it now price (optional):</label> {{ form.now_sale_price(id="now_sale_price", class="form-control", size=20) }}
+        {% for error in form.now_sale_price.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+        <label for="returns_accepted" >Returns Accepted?:</label> {{ form.returns_accepted(id="returns_accepted", class="form-control") }}
+        {% for error in form.returns_accepted.errors %}
+            <span style="color: red;">[{{ error }}]</span><br/>
+        {% endfor %}
+
+          <br/>
+           {{ form.submit(class="btn btn-lg btn-primary") }}
+           <a href="index">Cancel</a>
+      </div>
+
+      </form>
+    </div>
+    </div>
+{% endblock %}

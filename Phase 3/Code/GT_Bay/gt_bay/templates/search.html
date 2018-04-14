@@ -1,0 +1,129 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Item Search</h3>
+            </div>
+
+            <form class="form-signin" method="post" name="search">
+                {% if error %}<p class=error style="color: red;"><strong>Error:</strong> {{ error }}</p>{% endif %}
+                {{ form.hidden_tag() }}
+                <div class="panel-body">
+                    <label for="keyword">Keyword:</label> {{ form.keyword(id="keyword", class="form-control",
+                        size=50, value=search_keyword) }}
+                    {% for error in form.keyword.errors %}
+                        <span style="color: red;">[{{ error }}]</span><br/>
+                    {% endfor %}
+
+                    <label for="category">Category:</label> {{ form.category(id="category",
+                        class="form-control hacky", value=search_category) }}
+
+                    <label for="minimum_price">Minimum Price:</label> {{ form.minimum_price(id="minimum_price",
+                        class="form-control", size=20) }}
+                    {% for error in form.minimum_price.errors %}
+                        <span style="color: red;">[{{ error }}]</span><br/>
+                    {% endfor %}
+
+                    <label for="maximum_price">Maximum Price:</label> {{ form.maximum_price(id="maximum_price",
+                        class="form-control", size=20, value=search_maxPrice) }}
+                    {% for error in form.maximum_price.errors %}
+                        <span style="color: red;">[{{ error }}]</span><br/>
+                    {% endfor %}
+
+                    <label for="condition">Condition at least:</label> {{ form.condition(id="condition",
+                        class="form-control hacky", value=search_condition) }}
+
+                    <br/>
+
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                    <a href="{{ url_for('index') }}">Cancel</a>
+                    <input type="button" id="reset" name="Reset" value="Reset">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function popFormFields() {
+            keywordElem = document.getElementById("keyword");
+            categoryElem = document.getElementById("category");
+            minPriceElem = document.getElementById("minimum_price");
+            maxPriceElem = document.getElementById("maximum_price");
+            conditionElem = document.getElementById("condition");
+
+            keywordVal = getCookie("search_keyword")
+            if (keywordVal != "") {
+                keywordElem.value = keywordVal;
+            }
+            categoryVal = getCookie("search_category")
+            if (categoryVal != "") {
+                categoryElem.value = categoryVal;
+            }
+            minPriceVal = getCookie("search_minPrice")
+            if (minPriceVal != "") {
+                minPriceElem.value = minPriceVal;
+            }
+            maxPriceVal = getCookie("search_maxPrice")
+            if (maxPriceVal != "") {
+                maxPriceElem.value = maxPriceVal;
+            }
+            conditionVal = getCookie("search_condition")
+            if (conditionVal != "") {
+                conditionElem.value = conditionVal;
+            }
+        }
+
+        function setCookie(eId, cname) {
+            var cvalue = document.getElementById(eId).value;
+            var d = new Date();
+            d.setTime(d.getTime() + (10*60*1000));  // will expire in 10 minutes
+            var expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function killCookie(cname) {
+            document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function clearSearch() {
+            keywordElem.value = "";
+            categoryElem.value = 0;
+            minPriceElem.value = "";
+            maxPriceElem.value = "";
+            conditionElem.value = 0;
+
+            killCookie("search_keyword");
+            killCookie("search_category");
+            killCookie("search_minPrice");
+            killCookie("search_maxPrice");
+            killCookie("search_condition");
+        }
+
+        popFormFields();
+
+        keywordElem.onchange = function() {setCookie("keyword", "search_keyword")};
+        categoryElem.onchange = function() {setCookie("category", "search_category")};
+        minPriceElem.onchange = function() {setCookie("minimum_price", "search_minPrice")};
+        maxPriceElem.onchange = function() {setCookie("maximum_price", "search_maxPrice")};
+        conditionElem.onchange = function() {setCookie("condition", "search_condition")};
+
+        resetElem = document.getElementById("reset");
+        resetElem.onclick = function() {clearSearch()};
+    </script>
+{% endblock %}

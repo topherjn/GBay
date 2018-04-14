@@ -1,0 +1,47 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Auction Results</h3>
+      </div>
+    <div class="panel-body">
+
+        {% if data %}
+          <table class="table table-striped custab">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Item Name</th>
+                <th>Sale Price</th>
+                <th>Winner</th>
+                <th>Auction Ended</th>
+              </tr>
+            </thead>
+
+            {% for entry in data %}
+              <tr>
+                <th>{{ entry['item_id'] }}</th>
+                <th>{{ entry['item_name'] }}</th>
+              {% if entry['max_bid'] %}
+                <th>${{ entry['max_bid'] }}</th>
+              {% else %}
+                <th>&nbsp;&nbsp;&nbsp;--</th>
+              {% endif %}
+              {% if entry['username'] %}
+                <th>{{ entry['username'] }}</th>
+              {% else %}
+                <th>&nbsp;&nbsp;&nbsp;--</th>
+              {% endif %}
+                <th>{{ entry['auction_end_time'] }}</th>
+              </tr>
+            {% endfor %}
+          </table>
+        {% else %}
+          <p style="text-align:center;"><strong>No ended auction!</strong></p>
+        {% endif %}
+      <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Done</a>
+    </div>
+{% endblock %}
+
+

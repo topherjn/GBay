@@ -1,0 +1,22 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+#PyCharm
+.idea/
+
+# Setuptools distribution folder.
+/dist/
+/sphinx/_build/
+/sphinx/ask_amy_api/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+#Files to ignore
+logfile.log
+gt_bay.tar
+*.pid
+nohup.out
+*.swp

@@ -1,0 +1,42 @@
+{% extends "layout_with_menu.html" %}
+{% block body %}
+    <div class="container">
+    <div class="panel panel-primary">
+     <div class="panel-heading">
+            <h3 class="panel-title">Category Report</h3>
+            {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
+     </div>
+
+            {% if cat_report %}
+            <table class="table table-striped custab">
+              <thead>
+
+              <tr>
+                <th>Category</th>
+                <th>Total Items</th>
+                <th>Min Price</th>
+                <th>Max Price</th>
+                <th>Average Price</th>
+              </tr>
+              </thead>
+              {% for report_line in cat_report %}
+                  <tr>
+                <th>{{ report_line['Category'] }}</th>
+                <th>{{ report_line['Total Items'] }}</th>
+                <th>{{ report_line['Min Price'] }}</th>
+                <th>{{ report_line['Max Price'] }}</th>
+                <th>{{ report_line['Average Price'] }}</th>
+              </tr>
+
+            {% endfor %}
+
+            </table>
+            {% endif %}
+
+
+
+    </div>
+     <a href="index">Done</a>
+    </div>
+
+{% endblock %}
