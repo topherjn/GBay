@@ -258,6 +258,10 @@ INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('user
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin1', 'opensesame', 'Riley', 'Fuiss');
 INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('admin2', 'opensesayou', 'Tonnis', 'Kinser');
 
+-- Users for User Report
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('list1', 'pass', 'one', 'sell');  -- user report (1 listed, 1 sold)
+INSERT INTO RegularUser(username, password, first_name, last_name) VALUES ('ghost', 'pass', 'stealthy', 'watcher');  -- user report (no activity)
+
 -- Admins from Leo
 INSERT INTO AdminUser(username, position) VALUES ('admin1', 'Technical Support');
 INSERT INTO AdminUser(username, position) VALUES ('admin2', 'Chief Techy');
@@ -289,6 +293,22 @@ INSERT INTO Item(item_name, description, item_condition, returnable, starting_bi
 INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
    VALUES ('Microsoft Surface', 'Listed only to compare unfavorably to the Apple cult', 4, false, 500.00, 750.00, 899.00, '2018-04-23 06:00', 3, 'user5');
 
+-- Items for Search
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('Fountain', 'Just a urinal... Really, nothing more', 5, true, 1.00, 5.00, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('The Starry Night', 'Widely loved Dutch post-impressionistic landscape', 4, false, 10.00, 50.00, 100.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('Guernica', 'Large Spanish oil painting depicting the horrors of war', 3, false, 100.00, 500.00, 1000.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('Sagrada Familia', 'Sure it is not yet complete, but this Spanish wonder is an absolute steal!', 4, false, 250.00, 1000.00, 10000.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user6');
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('The Creation of Man', 'Sistine Chapel ceiling excerpt', 2, false, 1000.00, 5000.00, 1000000.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 'user6');
+
+-- Item for User Report
+INSERT INTO Item(item_name, description, item_condition, returnable, starting_bid, min_sale_price, get_it_now_price, auction_end_time, category_id, listing_username)
+	VALUES ('One Hit Wonder', 'You only have to do it really well once.', 5, false, 1.00, 2.50, 10.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 6, 'list1');
+
 -- Ratings from Leo
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user2', 1, 5, 'Great GPS!');
 INSERT INTO Rating(username, item_id, numstars, comments) VALUES ('user3', 1, 2, 'Not so great GPS!');
@@ -315,7 +335,6 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 3, 179
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 7, 20.00, '2018-04-04 20:20');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 7, 25.00, '2018-04-09 21:15');
 
-
 -- Bids from TAs
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 8, 30.00, '2018-04-17 14:00');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user5', 8, 31.00, '2018-04-17 20:00');
@@ -323,4 +342,9 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 8, 33.
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 8, 40.00, '2018-04-18 06:00');
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 8, 45.00, '2018-04-18 14:00');
 
-
+-- Bids for Search
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 11, 10.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 12, 101.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 13, 250.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 13, 1000.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 14, 2000.00, NOW());
