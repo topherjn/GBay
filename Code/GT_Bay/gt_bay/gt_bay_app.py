@@ -8,7 +8,6 @@ from data_access.rating import Rating
 from datetime import datetime
 import logging
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -45,6 +44,7 @@ def login():
         logging.debug("user={}, error={}".format(user, error))
         if user is not None:
             session['user'] = user.to_json()
+            session['last_search'] = None
             flash('You were logged in.')
             return redirect(url_for('index'))
 
@@ -62,6 +62,7 @@ def logout():
     """
 
     session.pop('user', None)
+    session.pop('last_search', None)
     flash('You were logged out')
     return redirect(url_for('index'))
 
@@ -167,6 +168,10 @@ def search():
         )
 
         if search_results is not None:
+            session['last_search'] = {'keyword': request.form['keyword'], 'category': request.form['category'], \
+                                      'minimum_price': minimum_price, 'maximum_price': maximum_price, \
+                                      'condition': request.form['condition']}
+            logging.debug("session last_search {}".format(session['last_search']))
             return render_template('search_results.html', search_results=search_results, error=error)
 
     logging.debug("\t\tgt_bay_app.search.valid: form.errors={}".format(form.errors))
@@ -322,9 +327,22 @@ def item_edit_desc():
     return render_template('item_edit_desc.html', ui_data={}, form=form, error=error)
     #return redirect(url_for('item_edit_desc.html', id=item_id, name=item_name, desc=desc))
 
+
 @app.route('/search_results')
 def search_results():
-    return render_template('search_results.html', ui_data={})
+
+    if session['last_search'] is not None:
+      item = Item()
+      search_results, error = item.search(
+            session['last_search']['keyword'],
+            session['last_search']['category'],
+            session['last_search']['minimum_price'],
+            session['last_search']['maximum_price'],
+            session['last_search']['condition']
+      )
+      return render_template('search_results.html', search_results=search_results, error=error)
+    else:
+      return redirect(url_for('index'))
 
 
 @app.route('/auction_results')

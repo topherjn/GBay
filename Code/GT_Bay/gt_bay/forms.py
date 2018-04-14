@@ -210,11 +210,11 @@ class ItemBiddingForm(FlaskForm):
             self.your_bid.errors.append("Only number accepted (e.g. 100.00)")
             return result
 
-        # your_bid has at most 2 decimal places
+        # your_bid has 2 decimal places
         bid_amount = self.your_bid.data
-        if str(bid_amount).count('.') == 1 and len(str(bid_amount)[str(bid_amount).find('.'):]) > 3:
+        if str(bid_amount).count('.') != 1 or len(str(bid_amount)[str(bid_amount).find('.'):]) != 3:
             result = False
-            self.your_bid.errors.append("At most 2 decimal places accepted (e.g. 100.00)")
+            self.your_bid.errors.append("Input format error: please be sure to include and only include dollars and cents (e.g., 100.00)")
 
         # check the value of your_bid
         logging.debug("\n\tItemBiddingForm.validate: {} {} {} {}".format(self.item_id, self.your_bid, self.min_bid,

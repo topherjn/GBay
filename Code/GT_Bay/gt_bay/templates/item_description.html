@@ -142,19 +142,19 @@
 
                 {% if item[7] == session.user['user_name'] %}
                     <p style="color:green; text-align:center;"><strong>You listed this item.</strong></p>
-                    <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
+                    <a href="search_results" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
                 {% elif now >= item[6] %}
-                    <a href="index" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
+                    <a href="search_results" class="btn btn-lg btn-primary" role="button" style="float:right;">Cancel</a>
                 {% elif mb_error %}
                     <p style="color:red"><strong>Minimum bid not known: {{ mb_error }}</strong></p>
                     <div style="float:right;">
-                        <a href="index">Cancel</a>
+                        <a href="search_results">Cancel</a>
                         <a href="get_item?id={{ form.item_id.data }}" class="btn btn-lg btn-primary" role="button">Refresh</a>
                     </div>
                 {% elif item[5] and form.min_bid.data >= item[5] %}
                     <p style="color:red; text-align:center;"><strong>Minimum bid exceeds Get It Now price!</strong></p>
                     <div style="float:right;">
-                        <a href="index">Cancel</a>
+                        <a href="search_results">Cancel</a>
                         <a href="get_now?id={{ form.item_id.data }}" class="btn btn-primary" role="button">Get It
                             Now!</a>
                     </div>
@@ -177,7 +177,7 @@
                     {{ form.min_bid(value=form.min_bid.data) }}
                     {{ form.getnow_price(value=form.getnow_price.data) }}
                     <div style="float:right;">
-                        <a href="index">Cancel</a>
+                        <a href="search_results">Cancel</a>
                         {{ form.submit(class="btn btn-lg btn-primary") }}
                     </div>
                     </form>

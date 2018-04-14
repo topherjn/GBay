@@ -28,14 +28,11 @@ class Item(BaseDAO):
         self._minimum_sale = minimum_sale
         self._auction_length = auction_length
         if auction_length is not None:
-            #todo / comment by Joy: if we keep _auction_start_date_time, should we change to
-            #now = auction_start_date_time + timedelta(days= int(auction_length))
             now = datetime.now() + timedelta(days= int(auction_length))
             self._auction_end_time = now.strftime('%Y-%m-%d %H:%M:%S')
         else:
             self._auction_end_time = None
         self._get_it_now = get_it_now
-        #todo / comment by Joy: do we need _auction_start_date_time?
         self._auction_start_date_time = auction_start_date_time
         self._listing_username = listing_username
 
