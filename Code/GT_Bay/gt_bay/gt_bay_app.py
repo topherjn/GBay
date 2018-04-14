@@ -160,7 +160,7 @@ def search():
 
         item = Item()
         search_results, error = item.search(
-            request.form['keyword'],
+            request.form['keyword'].strip(),
             request.form['category'],
             minimum_price,
             maximum_price,
@@ -168,7 +168,7 @@ def search():
         )
 
         if search_results is not None:
-            session['last_search'] = {'keyword': request.form['keyword'], 'category': request.form['category'], \
+            session['last_search'] = {'keyword': request.form['keyword'].strip(), 'category': request.form['category'], \
                                       'minimum_price': minimum_price, 'maximum_price': maximum_price, \
                                       'condition': request.form['condition']}
             logging.debug("session last_search {}".format(session['last_search']))
