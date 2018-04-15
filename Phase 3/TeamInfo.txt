@@ -3,3 +3,5 @@ For grading convenience, we have aggregated all of the app's SQL in the followin
 
 *Please note that the SQL in the file above relies on views created in the database initialization file:
 6400Spring18Team047/Phase 3/Code/GT_Bay/gt_bay_initialize.sql
+
+**This app requires MySQL v5.7.
