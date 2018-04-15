@@ -343,8 +343,8 @@ INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 8, 40.
 INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user6', 8, 45.00, '2018-04-18 14:00');
 
 -- Bids for Search
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 11, 10.00, NOW());
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 12, 101.00, NOW());
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 13, 250.00, NOW());
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 13, 1000.00, NOW());
-INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 14, 2000.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 12, 10.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user4', 13, 101.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user1', 14, 250.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user2', 14, 1000.00, NOW());
+INSERT INTO Bid(username, item_id, bid_amount, bid_time) VALUES ('user3', 15, 2000.00, NOW());
