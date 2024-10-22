@@ -6,10 +6,10 @@ class BaseDAO(object):
 
     @staticmethod
     def get_db():
-        return pymysql.connect(host='localhost',
-                                 user='root',
-                                 password='passw0rd',
-                                 db='cs6400_spr18_team047')
+        return pymysql.connect(host='127.0.0.1',
+                                 user='debian-sys-maint',
+                                 password='2SYRPmF5XUFSIQgq',
+                                 db='GT_BAY')
 
     def find_all(self):
         pass

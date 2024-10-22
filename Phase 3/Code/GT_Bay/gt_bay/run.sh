@@ -3,8 +3,8 @@ NUM_WORKERS=3
 TIMEOUT=120
 PIDFILE="gunicorn.pid"
 
-if [ -d "/home/ubuntu/Applications/python_envs" ]; then
-    source /home/ubuntu/Applications/python_envs/bin/activate
+if [ -d "/home/nicholson/Applications/python_envs" ]; then
+    source /home/nicholson/Applications/python_envs/bin/activate
 fi
 
 exec gunicorn gt_bay_app:app \
